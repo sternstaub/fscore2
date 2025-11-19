@@ -37,7 +37,7 @@ import java.util.List;
  * <p><b>Trait-Pattern Integration:</b></p>
  * <pre>
  * // Plot mit mehreren Traits
- * class TradeguildPlot implements PlotNamed, PlotContainerStorage, PlotContainerNpc {
+ * class TradeguildPlot implements PlotWithName, PlotContainerStorage, PlotContainerNpc {
  *     public List&lt;PlotAction&gt; getAvailablePlotActions() {
  *         return Stream.of(
  *             getNameActions(),

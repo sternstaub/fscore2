@@ -11,18 +11,18 @@ import java.util.UUID;
  *
  * <p>Dieses Interface definiert die Kern-Anforderungen für einen Plot.
  * Konkrete Plot-Implementierungen können zusätzliche Traits implementieren
- * (z.B. PlotNamed, PlotContainerStorage) für erweiterte Funktionalität.</p>
+ * (z.B. PlotWithName, PlotContainerStorage) für erweiterte Funktionalität.</p>
  *
  * <p><b>Trait-Pattern:</b></p>
  * <p>Das Plot-System basiert auf Trait-Komposition statt Vererbung.
  * Plot-Typen können beliebige Traits kombinieren:</p>
  * <pre>
  * // Beispiel: TradeguildPlot mit mehreren Traits
- * class TradeguildPlot implements Plot, PlotNamed, PlotContainerStorage, PlotContainerNpc {
+ * class TradeguildPlot implements Plot, PlotWithName, PlotContainerStorage, PlotContainerNpc {
  *     {@literal @}Override
  *     public List&lt;PlotAction&gt; getAvailablePlotActions() {
  *         return Stream.of(
- *             getNameActions(),      // von PlotNamed
+ *             getNameActions(),      // von PlotWithName
  *             getStorageActions(),   // von PlotContainerStorage
  *             getNpcActions()        // von PlotContainerNpc
  *         ).flatMap(List::stream).toList();
@@ -145,11 +145,11 @@ public interface Plot {
      *
      * <p><b>Trait-basierte Implementierung:</b></p>
      * <pre>
-     * class TradeguildPlot implements Plot, PlotNamed, PlotContainerStorage {
+     * class TradeguildPlot implements Plot, PlotWithName, PlotContainerStorage {
      *     {@literal @}Override
      *     public List&lt;PlotAction&gt; getAvailablePlotActions() {
      *         List&lt;PlotAction&gt; actions = new ArrayList&lt;&gt;();
-     *         actions.addAll(getNameActions());      // von PlotNamed
+     *         actions.addAll(getNameActions());      // von PlotWithName
      *         actions.addAll(getStorageActions());   // von PlotContainerStorage
      *         return actions;
      *     }

@@ -1,7 +1,7 @@
 package de.fallenstar.core.plot.action.impl;
 
 import de.fallenstar.core.plot.action.PlotAction;
-import de.fallenstar.core.plot.trait.PlotNamed;
+import de.fallenstar.core.plot.trait.PlotWithName;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
  *   <li>GUI-Display-Item Generierung</li>
  *   <li>Execute-Methode (Placeholder-Implementierung)</li>
  *   <li>Null-Safety und Exception-Handling</li>
- *   <li>Integration mit PlotNamed Trait</li>
+ *   <li>Integration mit PlotWithName Trait</li>
  * </ul>
  */
 @ExtendWith(MockitoExtension.class)
@@ -58,7 +58,7 @@ class PlotActionSetNameTest {
     @Mock
     private ItemMeta itemMeta;
 
-    private TestPlotNamed plot;
+    private TestPlotWithName plot;
     private PlotActionSetName action;
 
     @BeforeEach
@@ -73,14 +73,14 @@ class PlotActionSetNameTest {
         when(nonOwner.hasPermission(anyString())).thenReturn(false);
 
         // Erstelle Test-Plot
-        plot = new TestPlotNamed(UUID.randomUUID(), plotOwnerId, location, "Testplot");
+        plot = new TestPlotWithName(UUID.randomUUID(), plotOwnerId, location, "Testplot");
         action = new PlotActionSetName(plot);
     }
 
     // ==================== Constructor Tests ====================
 
     @Test
-    @DisplayName("Constructor: Akzeptiert validen PlotNamed")
+    @DisplayName("Constructor: Akzeptiert validen PlotWithName")
     void testConstructor_ValidPlot() {
         PlotActionSetName validAction = new PlotActionSetName(plot);
 
@@ -267,15 +267,15 @@ class PlotActionSetNameTest {
     // ==================== Integration Tests ====================
 
     @Test
-    @DisplayName("Integration: Action funktioniert mit PlotNamed Trait")
-    void testIntegration_WorksWithPlotNamedTrait() {
+    @DisplayName("Integration: Action funktioniert mit PlotWithName Trait")
+    void testIntegration_WorksWithPlotWithNameTrait() {
         try (MockedStatic<Bukkit> bukkit = mockStatic(Bukkit.class)) {
             bukkit.when(Bukkit::getItemFactory).thenReturn(itemFactory);
             when(itemFactory.getItemMeta(any(Material.class))).thenReturn(itemMeta);
             when(itemMeta.clone()).thenReturn(itemMeta);
 
-            // Erstelle PlotNamed
-            PlotNamed namedPlot = new TestPlotNamed(
+            // Erstelle PlotWithName
+            PlotWithName namedPlot = new TestPlotWithName(
                 UUID.randomUUID(),
                 UUID.randomUUID(),
                 location,
@@ -302,15 +302,15 @@ class PlotActionSetNameTest {
     // ==================== Test-Implementierung ====================
 
     /**
-     * Test-Implementierung von PlotNamed für Tests.
+     * Test-Implementierung von PlotWithName für Tests.
      */
-    private static class TestPlotNamed implements PlotNamed {
+    private static class TestPlotWithName implements PlotWithName {
         private final UUID id;
         private final UUID ownerId;
         private final Location location;
         private String name;
 
-        TestPlotNamed(UUID id, UUID ownerId, Location location, String name) {
+        TestPlotWithName(UUID id, UUID ownerId, Location location, String name) {
             this.id = id;
             this.ownerId = ownerId;
             this.location = location;

@@ -9,14 +9,17 @@ import java.util.UUID;
 /**
  * Trait für Plots mit NPC-Verwaltung (Citizens-Integration).
  *
- * <p>PlotIsContainerForNpc ist ein Trait-Interface für Plots, die einen oder
+ * <p>PlotWithNpcContainer ist ein Trait-Interface für Plots, die einen oder
  * mehrere NPCs (Non-Player Characters) hosten können. Diese NPCs werden
  * über das Citizens-Plugin verwaltet und können als Händler, Questgeber
  * oder Dekorations-Elemente dienen.</p>
  *
+ * <p><b>Naming Convention:</b></p>
+ * <p>Pattern: {@code [Subject]With[Capability]} - Ein Plot MIT einem NPC-Container.</p>
+ *
  * <p><b>Trait-Komposition:</b></p>
  * <pre>
- * class TradeguildPlot implements Plot, PlotNamed, PlotIsContainerForStorage, PlotIsContainerForNpc {
+ * class TradeguildPlot implements Plot, PlotWithName, PlotWithStorageContainer, PlotWithNpcContainer {
  *     private UUID npcId;
  *
  *     {@literal @}Override
@@ -32,9 +35,9 @@ import java.util.UUID;
  *     {@literal @}Override
  *     public List&lt;PlotAction&gt; getAvailablePlotActions() {
  *         return Stream.of(
- *             getNameActions(),
- *             getStorageActions(),
- *             getNpcActions()
+ *             getNameActions(),       // PlotWithName
+ *             getStorageActions(),    // PlotWithStorageContainer
+ *             getNpcActions()         // PlotWithNpcContainer
  *         ).flatMap(List::stream).toList();
  *     }
  * }
@@ -64,7 +67,7 @@ import java.util.UUID;
  * @see PlotAction
  * @see de.fallenstar.core.provider.NPCProvider
  */
-public interface PlotIsContainerForNpc extends Plot {
+public interface PlotWithNpcContainer extends Plot {
 
     /**
      * Gibt die UUID des assoziierten NPCs zurück.
@@ -81,7 +84,7 @@ public interface PlotIsContainerForNpc extends Plot {
      *
      * <p><b>Verwendung mit NPCProvider:</b></p>
      * <pre>
-     * PlotIsContainerForNpc npcPlot = getTradeguildPlot();
+     * PlotWithNpcContainer npcPlot = getTradeguildPlot();
      * UUID npcId = npcPlot.getNpcId();
      *
      * if (npcId != null) {

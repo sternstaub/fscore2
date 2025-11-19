@@ -2,9 +2,9 @@ package de.fallenstar.core.integration;
 
 import de.fallenstar.core.plot.action.PlotAction;
 import de.fallenstar.core.plot.action.impl.PlotActionSetName;
-import de.fallenstar.core.plot.trait.PlotIsContainerForNpc;
-import de.fallenstar.core.plot.trait.PlotIsContainerForStorage;
-import de.fallenstar.core.plot.trait.PlotNamed;
+import de.fallenstar.core.plot.trait.PlotWithNpcContainer;
+import de.fallenstar.core.plot.trait.PlotWithStorageContainer;
+import de.fallenstar.core.plot.trait.PlotWithName;
 import de.fallenstar.core.ui.GuiBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -37,7 +37,7 @@ import static org.mockito.Mockito.*;
  *
  * <p>Diese Tests demonstrieren ein realistisches Szenario:</p>
  * <ul>
- *   <li>TradeguildPlot implementiert alle drei Traits (PlotNamed, PlotIsContainerForStorage, PlotIsContainerForNpc)</li>
+ *   <li>TradeguildPlot implementiert alle drei Traits (PlotWithName, PlotWithStorageContainer, PlotWithNpcContainer)</li>
  *   <li>getAvailablePlotActions() kombiniert Actions aus allen Traits</li>
  *   <li>GuiBuilder generiert ein vollständiges GUI mit allen Actions</li>
  *   <li>Proof-of-Concept für die gesamte Architektur aus Sprint 20</li>
@@ -103,9 +103,9 @@ class TradeguildPlotIntegrationTest {
             );
 
             // Verifiziere alle Trait-Interfaces
-            assertTrue(tradeguild instanceof PlotNamed, "Sollte PlotNamed implementieren");
-            assertTrue(tradeguild instanceof PlotIsContainerForStorage, "Sollte PlotIsContainerForStorage implementieren");
-            assertTrue(tradeguild instanceof PlotIsContainerForNpc, "Sollte PlotIsContainerForNpc implementieren");
+            assertTrue(tradeguild instanceof PlotWithName, "Sollte PlotWithName implementieren");
+            assertTrue(tradeguild instanceof PlotWithStorageContainer, "Sollte PlotWithStorageContainer implementieren");
+            assertTrue(tradeguild instanceof PlotWithNpcContainer, "Sollte PlotWithNpcContainer implementieren");
 
             // Verifiziere Trait-Funktionalität
             assertEquals("Handelsgilde des Nordens", tradeguild.getName());
@@ -178,16 +178,16 @@ class TradeguildPlotIntegrationTest {
                 "Initial Name"
             );
 
-            // PlotNamed: Namen ändern
+            // PlotWithName: Namen ändern
             tradeguild.setName("Neuer Name");
             assertEquals("Neuer Name", tradeguild.getName());
 
-            // PlotIsContainerForStorage: Storage abrufen
+            // PlotWithStorageContainer: Storage abrufen
             Inventory storage = tradeguild.getStorageInventory();
             assertNotNull(storage);
             bukkit.verify(() -> Bukkit.createInventory(null, 54, "Lager: Neuer Name"));
 
-            // PlotIsContainerForNpc: NPC zuweisen
+            // PlotWithNpcContainer: NPC zuweisen
             UUID npcId = UUID.randomUUID();
             tradeguild.setNpcId(npcId);
             assertEquals(npcId, tradeguild.getNpcId());
@@ -322,9 +322,9 @@ class TradeguildPlotIntegrationTest {
      *
      * <p>Demonstriert vollständige Trait-Komposition:</p>
      * <ul>
-     *   <li>PlotNamed - Namen-Verwaltung</li>
-     *   <li>PlotIsContainerForStorage - Lager-Funktionalität</li>
-     *   <li>PlotIsContainerForNpc - NPC-Verwaltung (Citizens-Integration)</li>
+     *   <li>PlotWithName - Namen-Verwaltung</li>
+     *   <li>PlotWithStorageContainer - Lager-Funktionalität</li>
+     *   <li>PlotWithNpcContainer - NPC-Verwaltung (Citizens-Integration)</li>
      * </ul>
      *
      * <p>In einer realen Implementierung würde dieser Plot zusätzlich
@@ -336,7 +336,7 @@ class TradeguildPlotIntegrationTest {
      *   <li>Wirtschafts-Integration</li>
      * </ul>
      */
-    private static class TradeguildPlot implements PlotNamed, PlotIsContainerForStorage, PlotIsContainerForNpc {
+    private static class TradeguildPlot implements PlotWithName, PlotWithStorageContainer, PlotWithNpcContainer {
         private final UUID id;
         private final UUID ownerId;
         private final Location location;
@@ -351,7 +351,7 @@ class TradeguildPlotIntegrationTest {
             this.name = name;
         }
 
-        // ==================== PlotNamed ====================
+        // ==================== PlotWithName ====================
 
         @Override
         public String getName() {
@@ -363,7 +363,7 @@ class TradeguildPlotIntegrationTest {
             this.name = name;
         }
 
-        // ==================== PlotIsContainerForStorage ====================
+        // ==================== PlotWithStorageContainer ====================
 
         @Override
         public Inventory getStorageInventory() {
@@ -373,7 +373,7 @@ class TradeguildPlotIntegrationTest {
             return storageInventory;
         }
 
-        // ==================== PlotIsContainerForNpc ====================
+        // ==================== PlotWithNpcContainer ====================
 
         @Override
         public UUID getNpcId() {
@@ -406,15 +406,15 @@ class TradeguildPlotIntegrationTest {
         public List<PlotAction> getAvailablePlotActions() {
             // Trait-Komposition: Kombiniere Actions aus allen Traits
             return Stream.of(
-                getNameActions(),       // PlotNamed
-                getStorageActions(),    // PlotIsContainerForStorage (aktuell leer)
-                getNpcActions()         // PlotIsContainerForNpc (aktuell leer)
+                getNameActions(),       // PlotWithName
+                getStorageActions(),    // PlotWithStorageContainer (aktuell leer)
+                getNpcActions()         // PlotWithNpcContainer (aktuell leer)
             ).flatMap(List::stream).toList();
         }
 
         /**
          * Override getNameActions() um konkrete Actions zurückzugeben.
-         * Normalerweise würde PlotNamed dies als Default-Methode bereitstellen.
+         * Normalerweise würde PlotWithName dies als Default-Methode bereitstellen.
          */
         @Override
         public List<PlotAction> getNameActions() {

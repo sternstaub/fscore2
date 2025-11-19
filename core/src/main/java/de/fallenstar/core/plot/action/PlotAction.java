@@ -65,7 +65,7 @@ import org.bukkit.inventory.ItemStack;
  *
  * <p><b>Trait-Pattern Integration:</b></p>
  * <pre>
- * interface PlotNamed extends Plot {
+ * interface PlotWithName extends Plot {
  *     default List&lt;PlotAction&gt; getNameActions() {
  *         return List.of(new PlotActionSetName(this));
  *     }

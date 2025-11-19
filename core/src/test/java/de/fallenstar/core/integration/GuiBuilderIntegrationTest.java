@@ -2,7 +2,7 @@ package de.fallenstar.core.integration;
 
 import de.fallenstar.core.plot.action.PlotAction;
 import de.fallenstar.core.plot.action.impl.PlotActionSetName;
-import de.fallenstar.core.plot.trait.PlotNamed;
+import de.fallenstar.core.plot.trait.PlotWithName;
 import de.fallenstar.core.ui.GuiBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
  * <p>Diese Tests validieren das Self-Rendering Pattern und das Command Pattern
  * in einem realistischen Szenario:</p>
  * <ul>
- *   <li>Plots mit Traits (PlotNamed)</li>
+ *   <li>Plots mit Traits (PlotWithName)</li>
  *   <li>Konkrete PlotActions (PlotActionSetName)</li>
  *   <li>GuiBuilder erstellt GUI aus Actions</li>
  *   <li>Visibility-Filtering basierend auf Permissions</li>
@@ -94,8 +94,8 @@ class GuiBuilderIntegrationTest {
             when(itemFactory.getItemMeta(any(Material.class))).thenReturn(itemMeta);
             when(itemMeta.clone()).thenReturn(itemMeta);
 
-            // Erstelle Plot mit PlotNamed Trait
-            PlotNamed namedPlot = new TestPlotNamed(
+            // Erstelle Plot mit PlotWithName Trait
+            PlotWithName namedPlot = new TestPlotWithName(
                 UUID.randomUUID(),
                 ownerId,
                 location,
@@ -134,7 +134,7 @@ class GuiBuilderIntegrationTest {
             when(itemMeta.clone()).thenReturn(itemMeta);
 
             // Erstelle Plot mit mehreren Actions
-            PlotNamed namedPlot = new TestPlotNamed(
+            PlotWithName namedPlot = new TestPlotWithName(
                 UUID.randomUUID(),
                 ownerId,
                 location,
@@ -147,7 +147,7 @@ class GuiBuilderIntegrationTest {
             Inventory gui = GuiBuilder.buildFromActions(actions, owner, "Alle Actions");
 
             assertNotNull(gui);
-            // TestPlotNamed gibt 2 Actions zurück
+            // TestPlotWithName gibt 2 Actions zurück
             verify(mockInventory, times(2)).setItem(anyInt(), any(ItemStack.class));
         }
     }
@@ -160,7 +160,7 @@ class GuiBuilderIntegrationTest {
                 .thenReturn(mockInventory);
 
             // Erstelle Plot
-            PlotNamed namedPlot = new TestPlotNamed(
+            PlotWithName namedPlot = new TestPlotWithName(
                 UUID.randomUUID(),
                 ownerId,
                 location,
@@ -198,7 +198,7 @@ class GuiBuilderIntegrationTest {
             when(itemMeta.clone()).thenReturn(itemMeta);
 
             // Erstelle Plot mit mehreren Traits (simuliert)
-            PlotNamed namedPlot = new TestPlotNamed(
+            PlotWithName namedPlot = new TestPlotWithName(
                 UUID.randomUUID(),
                 ownerId,
                 location,
@@ -206,7 +206,7 @@ class GuiBuilderIntegrationTest {
             );
 
             // In Zukunft würde ein Plot hier mehrere Traits kombinieren:
-            // class FullPlot implements PlotNamed, PlotIsContainerForStorage, PlotIsContainerForNpc
+            // class FullPlot implements PlotWithName, PlotWithStorageContainer, PlotWithNpcContainer
             // und getAvailablePlotActions() würde alle Trait-Actions kombinieren
 
             List<PlotAction> actions = namedPlot.getAvailablePlotActions();
@@ -240,7 +240,7 @@ class GuiBuilderIntegrationTest {
             when(itemMeta.getLore()).thenReturn(firstLore);
 
             // Erstelle Plot
-            TestPlotNamed namedPlot = new TestPlotNamed(
+            TestPlotWithName namedPlot = new TestPlotWithName(
                 UUID.randomUUID(),
                 ownerId,
                 location,
@@ -280,15 +280,15 @@ class GuiBuilderIntegrationTest {
     // ==================== Test-Implementierung ====================
 
     /**
-     * Test-Implementierung von PlotNamed für Integration-Tests.
+     * Test-Implementierung von PlotWithName für Integration-Tests.
      */
-    private static class TestPlotNamed implements PlotNamed {
+    private static class TestPlotWithName implements PlotWithName {
         private final UUID id;
         private final UUID ownerId;
         private final Location location;
         private String name;
 
-        TestPlotNamed(UUID id, UUID ownerId, Location location, String name) {
+        TestPlotWithName(UUID id, UUID ownerId, Location location, String name) {
             this.id = id;
             this.ownerId = ownerId;
             this.location = location;

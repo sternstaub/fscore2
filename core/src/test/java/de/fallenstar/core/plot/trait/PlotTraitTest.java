@@ -32,9 +32,9 @@ import static org.mockito.Mockito.*;
  *
  * <p>Testet die Trait-Interfaces mit Fokus auf:</p>
  * <ul>
- *   <li>PlotNamed - Namen-Verwaltung</li>
- *   <li>PlotIsContainerForStorage - Storage-Verwaltung</li>
- *   <li>PlotIsContainerForNpc - NPC-Verwaltung</li>
+ *   <li>PlotWithName - Namen-Verwaltung</li>
+ *   <li>PlotWithStorageContainer - Storage-Verwaltung</li>
+ *   <li>PlotWithNpcContainer - NPC-Verwaltung</li>
  *   <li>Trait-Komposition (mehrere Traits kombiniert)</li>
  *   <li>Default-Methoden (getXActions)</li>
  * </ul>
@@ -62,12 +62,12 @@ class PlotTraitTest {
         ownerId = UUID.randomUUID();
     }
 
-    // ==================== PlotNamed Tests ====================
+    // ==================== PlotWithName Tests ====================
 
     @Test
-    @DisplayName("PlotNamed: getName und setName funktionieren")
-    void testPlotNamed_GetAndSetName() {
-        TestPlotNamed plot = new TestPlotNamed(plotId, ownerId, location);
+    @DisplayName("PlotWithName: getName und setName funktionieren")
+    void testPlotWithName_GetAndSetName() {
+        TestPlotWithName plot = new TestPlotWithName(plotId, ownerId, location);
 
         // Initial Name
         assertEquals("Testplot", plot.getName(), "Initial Name sollte 'Testplot' sein");
@@ -78,9 +78,9 @@ class PlotTraitTest {
     }
 
     @Test
-    @DisplayName("PlotNamed: getNameActions gibt leere Liste zurück (Placeholder)")
-    void testPlotNamed_GetNameActionsReturnsEmptyList() {
-        TestPlotNamed plot = new TestPlotNamed(plotId, ownerId, location);
+    @DisplayName("PlotWithName: getNameActions gibt leere Liste zurück (Placeholder)")
+    void testPlotWithName_GetNameActionsReturnsEmptyList() {
+        TestPlotWithName plot = new TestPlotWithName(plotId, ownerId, location);
 
         List<PlotAction> actions = plot.getNameActions();
 
@@ -88,11 +88,11 @@ class PlotTraitTest {
         assertTrue(actions.isEmpty(), "Actions sollten leer sein (Placeholder für Phase 9)");
     }
 
-    // ==================== PlotIsContainerForStorage Tests ====================
+    // ==================== PlotWithStorageContainer Tests ====================
 
     @Test
-    @DisplayName("PlotIsContainerForStorage: getStorageInventory gibt Inventory zurück")
-    void testPlotIsContainerForStorage_GetStorageInventory() {
+    @DisplayName("PlotWithStorageContainer: getStorageInventory gibt Inventory zurück")
+    void testPlotWithStorageContainer_GetStorageInventory() {
         try (MockedStatic<Bukkit> bukkit = mockStatic(Bukkit.class)) {
             bukkit.when(() -> Bukkit.createInventory(isNull(), anyInt(), anyString()))
                 .thenReturn(inventory);
@@ -107,8 +107,8 @@ class PlotTraitTest {
     }
 
     @Test
-    @DisplayName("PlotIsContainerForStorage: getStorageActions gibt leere Liste zurück (Placeholder)")
-    void testPlotIsContainerForStorage_GetStorageActionsReturnsEmptyList() {
+    @DisplayName("PlotWithStorageContainer: getStorageActions gibt leere Liste zurück (Placeholder)")
+    void testPlotWithStorageContainer_GetStorageActionsReturnsEmptyList() {
         try (MockedStatic<Bukkit> bukkit = mockStatic(Bukkit.class)) {
             bukkit.when(() -> Bukkit.createInventory(isNull(), anyInt(), anyString()))
                 .thenReturn(inventory);
@@ -122,11 +122,11 @@ class PlotTraitTest {
         }
     }
 
-    // ==================== PlotIsContainerForNpc Tests ====================
+    // ==================== PlotWithNpcContainer Tests ====================
 
     @Test
-    @DisplayName("PlotIsContainerForNpc: getNpcId und setNpcId funktionieren")
-    void testPlotIsContainerForNpc_GetAndSetNpcId() {
+    @DisplayName("PlotWithNpcContainer: getNpcId und setNpcId funktionieren")
+    void testPlotWithNpcContainer_GetAndSetNpcId() {
         TestPlotNpc plot = new TestPlotNpc(plotId, ownerId, location);
 
         // Initial null
@@ -143,8 +143,8 @@ class PlotTraitTest {
     }
 
     @Test
-    @DisplayName("PlotIsContainerForNpc: getNpcActions gibt leere Liste zurück (Placeholder)")
-    void testPlotIsContainerForNpc_GetNpcActionsReturnsEmptyList() {
+    @DisplayName("PlotWithNpcContainer: getNpcActions gibt leere Liste zurück (Placeholder)")
+    void testPlotWithNpcContainer_GetNpcActionsReturnsEmptyList() {
         TestPlotNpc plot = new TestPlotNpc(plotId, ownerId, location);
 
         List<PlotAction> actions = plot.getNpcActions();
@@ -164,16 +164,16 @@ class PlotTraitTest {
 
             TestPlotAllTraits plot = new TestPlotAllTraits(plotId, ownerId, location);
 
-            // PlotNamed
-            assertTrue(plot instanceof PlotNamed, "Sollte PlotNamed implementieren");
+            // PlotWithName
+            assertTrue(plot instanceof PlotWithName, "Sollte PlotWithName implementieren");
             assertEquals("Vollständiger Plot", plot.getName());
 
-            // PlotIsContainerForStorage
-            assertTrue(plot instanceof PlotIsContainerForStorage, "Sollte PlotIsContainerForStorage implementieren");
+            // PlotWithStorageContainer
+            assertTrue(plot instanceof PlotWithStorageContainer, "Sollte PlotWithStorageContainer implementieren");
             assertNotNull(plot.getStorageInventory());
 
-            // PlotIsContainerForNpc
-            assertTrue(plot instanceof PlotIsContainerForNpc, "Sollte PlotIsContainerForNpc implementieren");
+            // PlotWithNpcContainer
+            assertTrue(plot instanceof PlotWithNpcContainer, "Sollte PlotWithNpcContainer implementieren");
             assertNull(plot.getNpcId());
         }
     }
@@ -198,10 +198,10 @@ class PlotTraitTest {
     @Test
     @DisplayName("Trait-Komposition: Jeder Trait kann unabhängig verwendet werden")
     void testTraitComposition_IndependentTraits() {
-        TestPlotNamed namedPlot = new TestPlotNamed(plotId, ownerId, location);
+        TestPlotWithName namedPlot = new TestPlotWithName(plotId, ownerId, location);
         TestPlotNpc npcPlot = new TestPlotNpc(plotId, ownerId, location);
 
-        // PlotNamed funktioniert unabhängig
+        // PlotWithName funktioniert unabhängig
         namedPlot.setName("Unabhängig");
         assertEquals("Unabhängig", namedPlot.getName());
 
@@ -214,15 +214,15 @@ class PlotTraitTest {
     // ==================== Test-Implementierungen ====================
 
     /**
-     * Test-Plot mit PlotNamed Trait.
+     * Test-Plot mit PlotWithName Trait.
      */
-    private static class TestPlotNamed implements PlotNamed {
+    private static class TestPlotWithName implements PlotWithName {
         private final UUID id;
         private final UUID ownerId;
         private final Location location;
         private String name = "Testplot";
 
-        TestPlotNamed(UUID id, UUID ownerId, Location location) {
+        TestPlotWithName(UUID id, UUID ownerId, Location location) {
             this.id = id;
             this.ownerId = ownerId;
             this.location = location;
@@ -260,9 +260,9 @@ class PlotTraitTest {
     }
 
     /**
-     * Test-Plot mit PlotIsContainerForStorage Trait.
+     * Test-Plot mit PlotWithStorageContainer Trait.
      */
-    private static class TestPlotStorage implements PlotIsContainerForStorage {
+    private static class TestPlotStorage implements PlotWithStorageContainer {
         private final UUID id;
         private final UUID ownerId;
         private final Location location;
@@ -304,9 +304,9 @@ class PlotTraitTest {
     }
 
     /**
-     * Test-Plot mit PlotIsContainerForNpc Trait.
+     * Test-Plot mit PlotWithNpcContainer Trait.
      */
-    private static class TestPlotNpc implements PlotIsContainerForNpc {
+    private static class TestPlotNpc implements PlotWithNpcContainer {
         private final UUID id;
         private final UUID ownerId;
         private final Location location;
@@ -352,7 +352,7 @@ class PlotTraitTest {
     /**
      * Test-Plot mit allen drei Traits (Komposition).
      */
-    private static class TestPlotAllTraits implements PlotNamed, PlotIsContainerForStorage, PlotIsContainerForNpc {
+    private static class TestPlotAllTraits implements PlotWithName, PlotWithStorageContainer, PlotWithNpcContainer {
         private final UUID id;
         private final UUID ownerId;
         private final Location location;
@@ -366,7 +366,7 @@ class PlotTraitTest {
             this.location = location;
         }
 
-        // PlotNamed
+        // PlotWithName
         @Override
         public String getName() {
             return name;
@@ -377,7 +377,7 @@ class PlotTraitTest {
             this.name = name;
         }
 
-        // PlotIsContainerForStorage
+        // PlotWithStorageContainer
         @Override
         public Inventory getStorageInventory() {
             if (storageInventory == null) {
@@ -386,7 +386,7 @@ class PlotTraitTest {
             return storageInventory;
         }
 
-        // PlotIsContainerForNpc
+        // PlotWithNpcContainer
         @Override
         public UUID getNpcId() {
             return npcId;

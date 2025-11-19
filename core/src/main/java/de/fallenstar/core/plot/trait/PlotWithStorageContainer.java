@@ -9,13 +9,16 @@ import java.util.List;
 /**
  * Trait für Plots mit Lager-Funktionalität (Storage Container).
  *
- * <p>PlotIsContainerForStorage ist ein Trait-Interface für Plots, die einen
+ * <p>PlotWithStorageContainer ist ein Trait-Interface für Plots, die einen
  * Lager-Bereich (Chest-Inventory) bereitstellen. Spieler können Items
  * in diesem Lager ablegen und wieder entnehmen.</p>
  *
+ * <p><b>Naming Convention:</b></p>
+ * <p>Pattern: {@code [Subject]With[Capability]} - Ein Plot MIT einem Storage-Container.</p>
+ *
  * <p><b>Trait-Komposition:</b></p>
  * <pre>
- * class StoragePlot implements Plot, PlotNamed, PlotIsContainerForStorage {
+ * class StoragePlot implements Plot, PlotWithName, PlotWithStorageContainer {
  *     private Inventory storageInventory;
  *
  *     {@literal @}Override
@@ -26,8 +29,8 @@ import java.util.List;
  *     {@literal @}Override
  *     public List&lt;PlotAction&gt; getAvailablePlotActions() {
  *         return Stream.of(
- *             getNameActions(),
- *             getStorageActions()
+ *             getNameActions(),       // PlotWithName
+ *             getStorageActions()     // PlotWithStorageContainer
  *         ).flatMap(List::stream).toList();
  *     }
  * }
@@ -50,7 +53,7 @@ import java.util.List;
  * @see Plot
  * @see PlotAction
  */
-public interface PlotIsContainerForStorage extends Plot {
+public interface PlotWithStorageContainer extends Plot {
 
     /**
      * Gibt das Storage-Inventory des Plots zurück.
@@ -85,7 +88,7 @@ public interface PlotIsContainerForStorage extends Plot {
      * // PlotAction öffnet Storage
      * class PlotActionOpenStorage extends PlotAction {
      *     public void execute(Player player) {
-     *         PlotIsContainerForStorage storagePlot = (PlotIsContainerForStorage) plot;
+     *         PlotWithStorageContainer storagePlot = (PlotWithStorageContainer) plot;
      *         player.openInventory(storagePlot.getStorageInventory());
      *     }
      * }

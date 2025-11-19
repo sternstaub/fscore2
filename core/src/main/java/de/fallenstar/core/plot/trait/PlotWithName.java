@@ -8,13 +8,16 @@ import java.util.List;
 /**
  * Trait für Plots mit Namen-Verwaltung.
  *
- * <p>PlotNamed ist ein Trait-Interface, das Plot-Typen die Fähigkeit gibt,
+ * <p>PlotWithName ist ein Trait-Interface, das Plot-Typen die Fähigkeit gibt,
  * einen Namen zu speichern und zu ändern. Das Interface folgt dem Trait-Pattern:
  * Es erweitert Plot und kann mit anderen Traits kombiniert werden.</p>
  *
+ * <p><b>Naming Convention:</b></p>
+ * <p>Pattern: {@code [Subject]With[Capability]} - Ein Plot MIT der Fähigkeit, einen Namen zu haben.</p>
+ *
  * <p><b>Trait-Komposition:</b></p>
  * <pre>
- * class TradeguildPlot implements Plot, PlotNamed, PlotContainerStorage {
+ * class TradeguildPlot implements Plot, PlotWithName, PlotWithStorageContainer {
  *     private String name = "Handelshaus";
  *
  *     {@literal @}Override
@@ -30,8 +33,8 @@ import java.util.List;
  *     {@literal @}Override
  *     public List&lt;PlotAction&gt; getAvailablePlotActions() {
  *         return Stream.of(
- *             getNameActions(),      // von PlotNamed
- *             getStorageActions()    // von PlotContainerStorage
+ *             getNameActions(),      // von PlotWithName
+ *             getStorageActions()    // von PlotWithStorageContainer
  *         ).flatMap(List::stream).toList();
  *     }
  * }
@@ -45,7 +48,7 @@ import java.util.List;
  * <p><b>Verwendung:</b></p>
  * <pre>
  * // Plot mit Namen
- * PlotNamed namedPlot = getTradeguildPlot();
+ * PlotWithName namedPlot = getTradeguildPlot();
  * String currentName = namedPlot.getName();
  * namedPlot.setName("Neuer Name");
  *
@@ -59,7 +62,7 @@ import java.util.List;
  * @see Plot
  * @see PlotAction
  */
-public interface PlotNamed extends Plot {
+public interface PlotWithName extends Plot {
 
     /**
      * Gibt den aktuellen Namen des Plots zurück.
@@ -120,16 +123,16 @@ public interface PlotNamed extends Plot {
      *
      * <p>Diese Default-Implementierung gibt eine Liste mit Name-bezogenen
      * Actions zurück. In der aktuellen Phase ist dies ein Placeholder,
-     * der in Phase 9 um PlotActionSetName erweitert wird.</p>
+     * der in zukünftigen Phasen um PlotActionSetName erweitert wird.</p>
      *
      * <p><b>Default-Implementierung:</b></p>
      * <pre>
      * default List&lt;PlotAction&gt; getNameActions() {
-     *     return List.of();  // Placeholder - wird in Phase 9 erweitert
+     *     return List.of();  // Placeholder
      * }
      * </pre>
      *
-     * <p><b>Zukünftige Implementierung (Phase 9):</b></p>
+     * <p><b>Zukünftige Implementierung:</b></p>
      * <pre>
      * default List&lt;PlotAction&gt; getNameActions() {
      *     return List.of(
@@ -146,7 +149,7 @@ public interface PlotNamed extends Plot {
      * @return Liste von PlotActions für Namen-Verwaltung (niemals null)
      */
     default List<PlotAction> getNameActions() {
-        // Placeholder - wird in Phase 9 mit PlotActionSetName erweitert
+        // Placeholder - wird in zukünftigen Phasen erweitert
         return List.of();
     }
 }

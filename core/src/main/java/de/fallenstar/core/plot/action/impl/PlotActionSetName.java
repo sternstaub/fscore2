@@ -1,7 +1,7 @@
 package de.fallenstar.core.plot.action.impl;
 
 import de.fallenstar.core.plot.action.PlotAction;
-import de.fallenstar.core.plot.trait.PlotNamed;
+import de.fallenstar.core.plot.trait.PlotWithName;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -13,7 +13,7 @@ import java.util.List;
  * PlotAction zum Setzen/Ändern des Plot-Namens.
  *
  * <p>Diese Action ermöglicht es dem Plot-Besitzer, den Namen seines Plots
- * zu ändern. Die Action funktioniert nur auf Plots, die das {@link PlotNamed}
+ * zu ändern. Die Action funktioniert nur auf Plots, die das {@link PlotWithName}
  * Trait implementieren.</p>
  *
  * <p><b>Berechtigungen:</b></p>
@@ -24,7 +24,7 @@ import java.util.List;
  *
  * <p><b>Verwendung:</b></p>
  * <pre>
- * PlotNamed namedPlot = getTradeguildPlot();
+ * PlotWithName namedPlot = getTradeguildPlot();
  * PlotActionSetName action = new PlotActionSetName(namedPlot);
  *
  * // Im GUI anzeigen
@@ -50,20 +50,20 @@ import java.util.List;
  * @author FallenStar Development
  * @version 1.0.0-SNAPSHOT
  * @see PlotAction
- * @see PlotNamed
+ * @see PlotWithName
  * @since Phase 9
  */
 public class PlotActionSetName extends PlotAction {
 
-    private final PlotNamed namedPlot;
+    private final PlotWithName namedPlot;
 
     /**
      * Erstellt eine neue PlotActionSetName für den angegebenen Plot.
      *
-     * @param plot Der Plot, dessen Name geändert werden soll (muss PlotNamed implementieren)
-     * @throws IllegalArgumentException wenn plot null ist oder PlotNamed nicht implementiert
+     * @param plot Der Plot, dessen Name geändert werden soll (muss PlotWithName implementieren)
+     * @throws IllegalArgumentException wenn plot null ist oder PlotWithName nicht implementiert
      */
-    public PlotActionSetName(PlotNamed plot) {
+    public PlotActionSetName(PlotWithName plot) {
         super(plot);
         if (plot == null) {
             throw new IllegalArgumentException("Plot darf nicht null sein");
@@ -82,7 +82,7 @@ public class PlotActionSetName extends PlotAction {
      * <ul>
      *   <li>Öffnet Chat-Input für neuen Namen</li>
      *   <li>Validiert den eingegebenen Namen</li>
-     *   <li>Setzt den Namen via {@link PlotNamed#setName(String)}</li>
+     *   <li>Setzt den Namen via {@link PlotWithName#setName(String)}</li>
      *   <li>Zeigt Erfolgs-/Fehlermeldung</li>
      *   <li>Persistiert Änderung in Datenbank</li>
      * </ul>
