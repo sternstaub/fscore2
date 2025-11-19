@@ -3,7 +3,7 @@
 Ein modulares Minecraft-Plugin-System für Plot-Management, Wirtschaft, NPCs und Item-Verwaltung.
 
 **Plattform:** Spigot/Paper 1.20+
-**Status:** 🚧 In Entwicklung (Sprint 20 abgeschlossen)
+**Status:** 🚧 In Entwicklung (Sprint 1 abgeschlossen, Sprint 2 läuft)
 **Build:** ✅ SUCCESS (146 Tests, ~95% Coverage)
 
 ---
@@ -92,7 +92,7 @@ mvn clean package
 
 ## Features
 
-### ✅ Implementiert (Sprint 20)
+### ✅ Implementiert (Sprint 1)
 
 #### Core-Framework
 - **Provider-System** - Graceful Degradation für optionale Dependencies
@@ -108,7 +108,12 @@ mvn clean package
 #### Verfügbare Plot-Aktionen
 - **Namen ändern** - Owner können Plot-Namen anpassen
 
-### 🚧 In Entwicklung (Sprint 21+)
+### 🚧 In Entwicklung (Sprint 2)
+
+- **Architektur-Refactoring** - Einheitliche Naming Conventions & Package-Struktur
+- **Invokable-Pattern** - Command- und GUI-Invokation-System
+
+### 📅 Geplant (Sprint 3+)
 
 - **Storage-Verwaltung** - Lager öffnen, Preise setzen
 - **NPC-Verwaltung** - NPCs spawnen, entfernen, konfigurieren
@@ -187,9 +192,10 @@ Module sind **optional**. Wenn ein Modul fehlt, läuft das Core-Plugin mit reduz
 
 ### Projekt-Status
 
-**Aktueller Sprint:** Sprint 20 (abgeschlossen)
+**Aktueller Sprint:** Sprint 2 - Architektur-Refactoring (in Progress)
+**Letzter Sprint:** Sprint 1 - Core-Foundation (abgeschlossen)
 
-**Abgeschlossene Phasen:**
+**Sprint 1 Achievements:**
 - ✅ Maven Multi-Module Struktur
 - ✅ Provider-System mit Graceful Degradation
 - ✅ Self-Rendering Pattern (GuiRenderable)
@@ -198,16 +204,22 @@ Module sind **optional**. Wenn ein Modul fehlt, läuft das Core-Plugin mit reduz
 - ✅ Universal GuiBuilder
 - ✅ Proof-of-Concept validiert (PlotActionSetName)
 
-**Test-Metriken:**
+**Test-Metriken (Sprint 1):**
 - Tests: 146/146 ✅
 - Code Coverage: ~95%
 - Build: SUCCESS
 
-**Nächste Schritte (Sprint 21+):**
-- Konkrete PlotActions (Storage, NPC, Teleport)
-- Persistenz-Layer (Plot-Manager, Datenbank)
+**Sprint 2 Ziele:**
+- Einheitliche Naming Conventions (Prefix/Suffix-Pattern)
+- Package-Struktur etablieren (Root für Interfaces, impl/ für Klassen)
+- Invokable-Pattern vorbereiten (Command & GUI)
+- Alle bestehenden Klassen migrieren
+
+**Sprint 3+ Roadmap:**
+- Command-System (InvokableByCommand)
+- Konkrete PlotActions (Claim, Storage, NPC, Teleport)
+- Persistenz-Layer (PlotManager, Datenbank)
 - Provider-Implementierungen (Towny, Vault, Citizens)
-- Commands & Konfiguration
 
 ### Build & Tests
 

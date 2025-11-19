@@ -9,7 +9,7 @@
 Lies IMMER diese Dateien zu Beginn einer neuen Sitzung:
 
 1. **[README.md](README.md)** - Benutzer-Dokumentation (Installation, Features, Commands - IMMER aktuell halten!)
-2. **[CONVENTIONS_NAMING.md](CONVENTIONS_NAMING.md)** - Namenskonventionen (Hierarchie-Erkennbarkeit)
+2. **[CONVENTIONS_NAMING.md](CONVENTIONS_NAMING.md)** - Namenskonventionen (Prefix/Suffix-Pattern, Package-Struktur)
 3. **[CONVENTIONS_CODE.md](CONVENTIONS_CODE.md)** - SOLID-Prinzipien, Design Patterns, Anti-Patterns
 4. **[ERKENNTNISSE.md](ERKENNTNISSE.md)** - Sprint-Learnings, Bug-Analysen, Evolution
 
@@ -52,23 +52,24 @@ Sprint N
 #### Beispiel: Sprint-Ablauf
 
 ```markdown
-## Sprint 20: Core-Interfaces Implementierung
+## Sprint 1: Core-Foundation Etablierung
 
 ### Initiale Phasen (Start)
-1. GuiRenderable Interface erstellen
-2. PlotAction Basisklasse implementieren
-3. GuiBuilder implementieren
+1. Maven Multi-Module Struktur
+2. Provider-System mit Graceful Degradation
+3. GuiRenderable Interface erstellen
 
 ### Angepasste Phasen (Während Sprint)
-1. GuiRenderable Interface erstellen ✅
-2. PlotAction Basisklasse implementieren ✅
-3. **NEU:** MenuAction Interface (Erkenntnis: Hierarchie nötig)
-4. GuiBuilder implementieren (verschoben)
-5. **NEU:** Erste PlotAction als Proof-of-Concept
+1. Maven Multi-Module Struktur ✅
+2. Provider-System ✅
+3. GuiRenderable Interface ✅
+4. **NEU:** MenuAction Interface (Erkenntnis: Hierarchie nötig)
+5. **NEU:** PlotAction Basisklasse
+6. **NEU:** Proof-of-Concept (PlotActionSetName)
 
 ### Grund für Änderungen
-- MenuAction wurde während Implementierung als kritisch erkannt
-- GuiBuilder benötigt konkrete Actions für Tests
+- MenuAction wurde während Design als kritisch erkannt
+- PlotAction als abstrakte Basis etabliert
 - Proof-of-Concept validiert Architektur früher
 ```
 
@@ -114,26 +115,26 @@ Sprint N
 **Format für Sprint-Übergabe:**
 
 ```markdown
-## Aktueller Sprint: Sprint 20
+## Aktueller Sprint: Sprint 2
 
-**Ziel:** Core-Interfaces implementieren
-**Status:** In Progress (Phase 3 von 5)
-**Nächster Schritt:** MenuAction Interface implementieren
+**Ziel:** Architektur-Refactoring (Naming & Package-Struktur)
+**Status:** In Progress (Phase 2 von 8)
+**Nächster Schritt:** Trait-Interfaces umbenennen
 
 ### Abgeschlossene Phasen
-- [x] Phase 1: GuiRenderable Interface
-- [x] Phase 2: PlotAction Basisklasse
+- [x] Phase 1: Conventions aktualisieren
 
 ### Aktuelle Phase
-- [ ] Phase 3: MenuAction Interface ← HIER
+- [ ] Phase 2: Trait-Interfaces umbenennen ← HIER
 
 ### Geplante Phasen
-- [ ] Phase 4: GuiBuilder implementieren
-- [ ] Phase 5: Proof-of-Concept PlotAction
+- [ ] Phase 3: Abstrakte Klassen erstellen
+- [ ] Phase 4: Package-Struktur etablieren
+- [ ] ...
 
 ### Erkenntnisse bisher
-- isVisible() benötigt Player-Kontext
-- requiresOwnership() Pattern bewährt sich
+- Prefix/Suffix-Pattern etabliert
+- Package-Struktur definiert (Root für Interfaces, impl/ für Klassen)
 ```
 
 #### Test-Driven Development (PFLICHT)
@@ -519,12 +520,20 @@ class MenuAction extends PlotAction
 
 ## 🔄 Projekt-Status
 
-**Phase:** Neuinitialisierung aus alten Artefakten
-**Basis:** Erkenntnisse aus fs-core-sample-dump (AI-generierter Prototyp)
-**Ziel:** Saubere Implementierung ohne Legacy-Ballast
+**Aktueller Sprint:** Sprint 2 - Architektur-Refactoring
+**Letzter abgeschlossener Sprint:** Sprint 1 - Core-Foundation
 
-**Initialisiert:** 2025-11-19
-**Nächste Schritte:** Core-Interfaces implementieren (siehe README.md)
+**Sprint 1 Achievements:**
+- ✅ Maven Multi-Module Struktur
+- ✅ Provider-System mit Graceful Degradation
+- ✅ Self-Rendering Pattern (GuiRenderable)
+- ✅ Command Pattern (PlotAction)
+- ✅ Trait-Komposition (PlotNamed, PlotIsContainerForStorage, PlotIsContainerForNpc)
+- ✅ Universal GuiBuilder
+- ✅ Proof-of-Concept (PlotActionSetName)
+
+**Sprint 2 Ziel:** Architektur-Refactoring (Naming Conventions & Package-Struktur)
+**Sprint 3 Geplant:** Command-System (Invokable-Pattern)
 
 ---
 

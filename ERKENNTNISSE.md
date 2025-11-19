@@ -796,32 +796,143 @@ if (plot instanceof Priceable priceable) {
 }
 ```
 
-### Nächste Schritte (Sprint 21+)
+---
 
-**Priorität 1: Konkrete PlotActions**
-- PlotActionOpenStorage (Storage öffnen)
-- PlotActionSetStoragePrice (Mietpreis setzen)
-- PlotActionSpawnNpc (NPC erstellen)
-- PlotActionRemoveNpc (NPC entfernen)
+## Neuinitialisierung (2025-11-19)
 
-**Priorität 2: Persistenz**
-- PlotManager (Plot-Verwaltung)
-- Datenbank-Integration (MySQL/SQLite)
-- Plot-Serialization
-
-**Priorität 3: Provider-Implementierungen**
-- TownyPlotProvider (Towny-Integration)
-- VaultEconomyProvider (Economy-Integration)
-- CitizensNPCProvider (Citizens-Integration)
-
-**Priorität 4: Real-World Testing**
-- Minecraft-Server Integration
-- Performance-Tests
-- User-Testing mit echten Spielern
+Diese Repository-Neuinitialisierung startete mit Sprint 1 und implementiert nur die bewährten Patterns aus den vorherigen Erkenntnissen.
 
 ---
 
-**Stand:** Sprint 20 abgeschlossen (2025-11-19)
-**Ziel:** Saubere Implementierung ohne Legacy-Ballast ✅
-**Philosophie:** Design Patterns > Quick Hacks ✅
-**Validierung:** Proof-of-Concept erfolgreich ✅
+## Sprint 1: Core-Foundation Etablierung (2025-11-19)
+
+**Ziel:** Saubere Implementierung der Kern-Architektur ohne Legacy-Ballast
+
+### Implementierte Features
+
+1. **Maven Multi-Module Struktur**
+   - `core/` - Kern-Plugin mit allen Basis-Systemen
+   - `module-towny/`, `module-vault/`, `module-citizens/` - Optionale Provider-Module
+
+2. **Provider-System mit Graceful Degradation**
+   - `EconomyProvider`, `NpcProvider` Interfaces
+   - NoOp-Fallbacks wenn Module fehlen
+
+3. **Self-Rendering Pattern (GuiRenderable)**
+   - Interface für selbst-rendernde UI-Komponenten
+   - Eliminiert separateUI-Klassen
+
+4. **Command Pattern (PlotAction)**
+   - Abstrakte PlotAction Basis-Klasse
+   - requiresOwnership() Pattern
+   - canExecute() Permission-System
+
+5. **Trait-Komposition**
+   - `PlotNamed` - Namen-Verwaltung
+   - `PlotIsContainerForStorage` - Storage-Funktionalität
+   - `PlotIsContainerForNpc` - NPC-Verwaltung
+
+6. **Universal GuiBuilder**
+   - `GuiBuilder.buildFromActions()` funktioniert für alle Plot-Typen
+   - Dynamische GUI-Generierung
+
+7. **Proof-of-Concept**
+   - `PlotActionSetName` als vollständige Referenz-Implementierung
+   - Integration-Tests validieren Architektur
+
+### Test-Metriken
+
+- **Tests:** 146/146 ✅
+- **Code Coverage:** ~95%
+- **Build:** SUCCESS
+
+### Kritische Erkenntnisse
+
+#### 1. Naming Convention Problem
+**Problem:** Namen waren inkonsistent und teils zu kurz/unklar
+```java
+PlotNamed                    // Unklar: Trait oder Status?
+PlotIsContainerForStorage    // Zu lang, verwirrend
+```
+
+**Lösung für Sprint 2:** Prefix/Suffix-Pattern etablieren
+
+#### 2. Package-Struktur unklar
+**Problem:** Keine klare Trennung zwischen Interfaces und Implementierungen
+
+**Lösung für Sprint 2:** Universelles Pattern etablieren
+```
+[package]/
+├── [Interfaces].java
+└── impl/
+    ├── Abstract[Base].java
+    └── [Concrete].java
+```
+
+### Nächste Schritte (Sprint 2)
+
+**Priorität 1: Architektur-Refactoring**
+- Naming Conventions finalisieren (Prefix/Suffix-Pattern)
+- Package-Struktur etablieren
+- Alle Klassen migrieren
+
+**Priorität 2: Invokable-Pattern vorbereiten**
+- `Invokable`, `InvokableByCommand`, `InvokableByGuiButton` Interfaces
+- CommandInvoker, GuiButton Datenklassen
+
+**Sprint 3+: Command-System & Features**
+- Command-System implementieren
+- Konkrete PlotActions (Claim, Storage, NPC)
+- Persistenz-Layer
+- Provider-Implementierungen
+
+---
+
+## Sprint 2: Architektur-Refactoring (2025-11-19 - laufend)
+
+**Ziel:** Einheitliche Naming Conventions & Package-Struktur etablieren
+
+### Neue Patterns
+
+#### Naming Conventions
+
+| Typ | Pattern | Beispiel |
+|-----|---------|----------|
+| Interface (Trait) | `[Subject]With[Capability]` | `PlotWithName`, `PlotWithStorageContainer` |
+| Interface (Invokable) | `InvokableBy[Mechanism]` | `InvokableByCommand`, `InvokableByGuiButton` |
+| Abstrakte Klasse | `Abstract[Name]` | `AbstractPlotBase`, `AbstractPlotClaimed` |
+| Konkrete Klasse | `[Name][Type]` | `TradeguildPlot`, `PlotActionSetName` |
+| Enumeration | `Defined[Concept]s` | `DefinedPlotTypes`, `DefinedCurrencies` |
+
+#### Package-Struktur
+
+```
+plot/
+├── Plot.java                       # Interface
+├── PlotWithName.java               # Interface
+├── DefinedPlotTypes.java           # Enum
+└── impl/
+    ├── AbstractPlotBase.java       # Abstrakt
+    ├── AbstractPlotClaimed.java    # Abstrakt
+    └── TradeguildPlot.java         # Konkret
+```
+
+### Migration-Plan
+
+**Phase 1: Conventions aktualisieren** ✅
+- CONVENTIONS_NAMING.md neu geschrieben
+- CLAUDE.md aktualisiert
+
+**Phase 2-8: Code-Migration**
+- Trait-Interfaces umbenennen
+- Abstrakte Klassen erstellen
+- Package-Struktur reorganisieren
+- Tests migrieren
+- Build validieren
+
+---
+
+**Stand:** Sprint 1 abgeschlossen, Sprint 2 in Progress (2025-11-19)
+**Ziel:** Perfekte Architektur-Foundation ✅
+**Philosophie:** Explizite Namen > Kurze Namen ✅
+**Fokus:** Design vor Features ✅
