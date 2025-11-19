@@ -23,21 +23,26 @@ FallenStar Core ist ein modulares Minecraft-Plugin-System mit Fokus auf:
 
 ```
 core/              - Core-Plugin mit Interfaces und UI-Framework
-module-economy/    - Wirtschaftssystem
-module-items/      - Item-Management
-module-npcs/       - NPC-System
-module-plots/      - Plot-System
+                     (Plot-, Economy-, UI-, NPC-Systeme)
+module-towny/      - Towny-Integration (Städte/Towns)
+module-citizens/   - Citizens-Integration (NPC-Spawning)
+module-vault/      - Vault-Integration (Economy-Provider)
+module-mmoitems/   - MMOItems-Integration (Custom Items) [temporär deaktiviert]
 ```
 
 ### Provider-Pattern (Graceful Degradation)
 
-Optionale Dependencies ohne Hard-Coupling:
-- **Towny** - Plot-Integration (optional)
-- **Vault** - Economy-Integration (optional)
-- **Citizens** - NPC-System (optional)
-- **MMOItems** - Custom Items (optional)
+**Core = Framework, Module = Integrationen**
 
-Wenn eine Dependency fehlt, läuft das System mit reduzierter Funktionalität weiter.
+Das Core-Plugin enthält alle Basis-Systeme (Plot, Economy, UI, NPC).
+Die Module sind optionale Adapter für externe Plugins:
+
+- **module-towny** - Verbindet Towny-Städte mit FallenStar Plot-System
+- **module-vault** - Nutzt Vault für Economy-Transaktionen
+- **module-citizens** - Spawnt NPCs über Citizens
+- **module-mmoitems** - Integriert MMOItems Custom Items *(aktuell deaktiviert)*
+
+Wenn ein Modul fehlt, läuft das Core-System mit NoOp-Fallback weiter (Graceful Degradation).
 
 ---
 
