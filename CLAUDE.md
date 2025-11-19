@@ -318,10 +318,10 @@ abstract class PlotAction implements GuiRenderable {
 ### 3. Trait-Komposition
 
 ```java
-interface NamedPlot { List<PlotAction> getNameActions(); }
-interface StorageContainerPlot { List<PlotAction> getStorageActions(); }
+interface PlotNamed { List<PlotAction> getNameActions(); }
+interface PlotContainerStorage { List<PlotAction> getStorageActions(); }
 
-class TradeguildPlot implements NamedPlot, StorageContainerPlot {
+class TradeguildPlot implements PlotNamed, PlotContainerStorage {
     List<PlotAction> getAvailablePlotActions() {
         return Stream.of(getNameActions(), getStorageActions())
             .flatMap(List::stream).toList();

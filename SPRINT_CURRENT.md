@@ -160,9 +160,9 @@ fallenstar-core/
 **Ziel:** Kompositionsfähige Plot-Traits
 
 **Aufgaben:**
-- [ ] `NamedPlot` Interface
+- [ ] `PlotNamed` Interface
   ```java
-  interface NamedPlot extends Plot {
+  interface PlotNamed extends Plot {
       String getName();
       void setName(String name);
       default List<PlotAction> getNameActions() {
@@ -170,8 +170,8 @@ fallenstar-core/
       }
   }
   ```
-- [ ] `StorageContainerPlot` Interface (Placeholder)
-- [ ] `NpcContainerPlot` Interface (Placeholder)
+- [ ] `PlotContainerStorage` Interface (Placeholder)
+- [ ] `PlotContainerNpc` Interface (Placeholder)
 - [ ] Unit Tests für Default-Implementierungen
 - [ ] JavaDoc auf Deutsch
 

@@ -51,11 +51,11 @@ Wenn ein Modul fehlt, läuft das Core-System mit NoOp-Fallback weiter (Graceful 
 ### 1. Trait-basierte Komposition
 
 ```java
-interface NamedPlot { ... }
-interface StorageContainerPlot { ... }
-interface NpcContainerPlot { ... }
+interface PlotNamed { ... }
+interface PlotContainerStorage { ... }
+interface PlotContainerNpc { ... }
 
-class TradeguildPlot implements NamedPlot, StorageContainerPlot, NpcContainerPlot {
+class TradeguildPlot implements PlotNamed, PlotContainerStorage, PlotContainerNpc {
     // Kombiniert alle Traits
 }
 ```
@@ -116,7 +116,7 @@ Dieses Projekt wurde ursprünglich in sehr kurzer Zeit AI-generiert und war inko
 | Bereich | Problem | Lösung |
 |---------|---------|--------|
 | **Items** | CoinProvider hart-kodiert | CurrencyItem Interface + Registry |
-| **Plots** | Preis-Logik nur in StorageContainerPlot | Priceable Interface + Manager |
+| **Plots** | Preis-Logik nur in PlotContainerStorage | Priceable Interface + Manager |
 | **NPCs** | Manuelle UI-Konstruktion | NpcAction + GuiBuilder |
 | **Economy** | TradeUI nicht GuiRenderable-konform | TradeAction mit Self-Rendering |
 

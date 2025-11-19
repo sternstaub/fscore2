@@ -89,20 +89,20 @@ abstract class PlotAction implements GuiRenderable {
 **Zweck:** Komposition statt Vererbung.
 
 ```java
-interface NamedPlot {
+interface PlotNamed {
     List<PlotAction> getNameActions();
 }
 
-interface StorageContainerPlot {
+interface PlotContainerStorage {
     List<PlotAction> getStorageActions();
 }
 
-interface NpcContainerPlot {
+interface PlotContainerNpc {
     List<PlotAction> getNpcActions();
 }
 
 // Konkrete Implementierung kombiniert Traits
-class TradeguildPlot implements NamedPlot, StorageContainerPlot, NpcContainerPlot {
+class TradeguildPlot implements PlotNamed, PlotContainerStorage, PlotContainerNpc {
     @Override
     public List<PlotAction> getAvailablePlotActions() {
         List<PlotAction> actions = new ArrayList<>();

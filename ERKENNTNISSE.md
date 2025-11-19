@@ -96,13 +96,13 @@ class PlotActionSetName extends PlotAction {
 **Konzept:** Plots exposieren ihre verfügbaren Aktionen über Traits.
 
 ```java
-interface NamedPlot {
+interface PlotNamed {
     default List<PlotAction> getNameActions() {
         return List.of(new PlotActionSetName(this));
     }
 }
 
-interface StorageContainerPlot {
+interface PlotContainerStorage {
     default List<PlotAction> getStorageActions() {
         return List.of(
             new PlotActionOpenStorage(this),
@@ -111,7 +111,7 @@ interface StorageContainerPlot {
     }
 }
 
-interface NpcContainerPlot {
+interface PlotContainerNpc {
     default List<PlotAction> getNpcActions() {
         return List.of(
             new PlotActionSpawnNpc(this),
@@ -124,7 +124,7 @@ interface NpcContainerPlot {
 **Zusammenführung:**
 ```java
 class TradeguildPlot extends Plot
-    implements NamedPlot, StorageContainerPlot, NpcContainerPlot {
+    implements PlotNamed, PlotContainerStorage, PlotContainerNpc {
 
     @Override
     public List<PlotAction> getAvailablePlotActions() {
@@ -319,11 +319,11 @@ class CurrencyRegistry {
 }
 ```
 
-### 2. Plots-Modul: Preis-Logik nur in StorageContainerPlot
+### 2. Plots-Modul: Preis-Logik nur in PlotContainerStorage
 
 **Problem:**
 ```java
-class StorageContainerPlot {
+class PlotContainerStorage {
     private Map<ItemStack, Double> prices = new HashMap<>();  // Nur hier!
 }
 ```
@@ -488,14 +488,14 @@ class PlotActionPermissions { ... }
 **Konsequenz:**
 ```java
 // ✅ Flexibel kombinierbar
-interface NamedPlot { ... }
-interface StorageContainerPlot { ... }
-class TradeguildPlot implements NamedPlot, StorageContainerPlot { ... }
+interface PlotNamed { ... }
+interface PlotContainerStorage { ... }
+class TradeguildPlot implements PlotNamed, PlotContainerStorage { ... }
 
 // ❌ Starr und schwer erweiterbar
 class Plot { ... }
-class NamedPlot extends Plot { ... }
-class StoragePlot extends NamedPlot { ... }
+class PlotNamed extends Plot { ... }
+class StoragePlot extends PlotNamed { ... }
 ```
 
 ### 3. GuiBuilder > instanceof
@@ -572,9 +572,9 @@ else if (plot instanceof StoragePlot) showStorageGui();
 - [ ] `GuiBuilder` Utility
 
 ### Priorität 2: Trait-System
-- [ ] `NamedPlot` Interface
-- [ ] `StorageContainerPlot` Interface
-- [ ] `NpcContainerPlot` Interface
+- [ ] `PlotNamed` Interface
+- [ ] `PlotContainerStorage` Interface
+- [ ] `PlotContainerNpc` Interface
 - [ ] `Priceable` Interface
 
 ### Priorität 3: Provider-System
