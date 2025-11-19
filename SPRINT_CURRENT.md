@@ -2,9 +2,9 @@
 
 **Ziel:** Grundlegende Architektur-Komponenten implementieren und Maven-Projekt initialisieren
 
-**Status:** Phase 2 abgeschlossen ✅
+**Status:** Phase 3 abgeschlossen ✅
 **Start:** 2025-11-19
-**Letzte Aktualisierung:** 2025-11-19 05:46
+**Letzte Aktualisierung:** 2025-11-19 06:00
 **Verantwortlich:** Claude (AI-Assistant)
 
 ---
@@ -129,22 +129,34 @@ fallenstar-core/
 
 ---
 
-### Phase 3: Core-Interfaces implementieren (GuiRenderable)
-**Ziel:** Basis-Interfaces für Self-Rendering Pattern
+### Phase 3: GuiRenderable Interface (Self-Rendering Pattern)
+**Ziel:** Basis-Interface für Self-Rendering Pattern
+
+**Status:** ✅ ABGESCHLOSSEN
 
 **Aufgaben:**
-- [ ] `GuiRenderable` Interface erstellen
-  ```java
-  interface GuiRenderable {
-      ItemStack getDisplayItem();
-      boolean isVisible(Player player);
-  }
-  ```
-- [ ] Unit Tests für GuiRenderable (Mock-Implementierungen)
-- [ ] JavaDoc auf Deutsch
-- [ ] Build-Test: `mvn clean test`
+- [x] `GuiRenderable` Interface erstellen
+  - [x] `getDisplayItem()` - ItemStack für GUI-Darstellung
+  - [x] `isVisible(Player)` - Visibility-Check (default: true)
+  - [x] JavaDoc auf Deutsch (vollständig)
+  - [x] Code-Beispiele in JavaDoc
+- [x] Unit Tests (12 Tests)
+  - [x] `GuiRenderableTest` mit Mock-Implementierungen
+  - [x] Test: Interface-Vertrag (nicht-null)
+  - [x] Test: Default-Implementierung
+  - [x] Test: Permission-basierte Visibility
+  - [x] Test: Null-Handling
+  - [x] Test: Multiple Renderables
+- [x] Build-Test: `mvn clean test` ✅ (61/61 Tests)
+- [x] Build-Package: `mvn clean package` ✅
 
 **Package:** `de.fallenstar.core.ui`
+
+**Details:**
+- 1 Interface mit 2 Methoden
+- 12 Unit Tests
+- Mock-basiert (keine Bukkit-Server-Dependency)
+- Integration-Tests dokumentiert
 
 ---
 
@@ -330,11 +342,12 @@ Ein Sprint gilt als abgeschlossen, wenn:
 
 | Metrik | Ziel | Aktuell | Status |
 |--------|------|---------|--------|
-| Phasen abgeschlossen | 10 | 2 | 🟡 |
-| Unit Tests geschrieben | ~50 | 49 | ✅ |
+| Phasen abgeschlossen | 10 | 3 | 🟡 |
+| Unit Tests geschrieben | ~70 | 61 | ✅ |
 | Code Coverage | ≥80% | ~95% | ✅ |
 | Build-Status | ✅ Grün | ✅ Grün | ✅ |
 | JavaDoc-Abdeckung | 100% (Public APIs) | 100% | ✅ |
+| Production Code | ~20 Klassen | 14 | 🟡 |
 
 ---
 
