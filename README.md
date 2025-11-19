@@ -1,15 +1,195 @@
 # FallenStar Core
 
-**Status:** ✅ Sprint 20 abgeschlossen (Core-Foundation etabliert)
-**Sprache:** Deutsch (Dokumentation) / Englisch (Code)
-**Plattform:** Minecraft Plugin (Spigot/Paper)
+Ein modulares Minecraft-Plugin-System für Plot-Management, Wirtschaft, NPCs und Item-Verwaltung.
+
+**Plattform:** Spigot/Paper 1.20+
+**Status:** 🚧 In Entwicklung (Sprint 20 abgeschlossen)
 **Build:** ✅ SUCCESS (146 Tests, ~95% Coverage)
 
 ---
 
-## Projekt-Status
+## 📋 Inhaltsverzeichnis
 
-**Sprint 20 (2025-11-19):** Core-Foundation & Architektur-Setup
+- [Über das Projekt](#über-das-projekt)
+- [Installation](#installation)
+- [Features](#features)
+- [Commands](#commands)
+- [Konfiguration](#konfiguration)
+- [Module](#module)
+- [Entwicklung](#entwicklung)
+- [Dokumentation](#dokumentation)
+- [Lizenz](#lizenz)
+
+---
+
+## Über das Projekt
+
+FallenStar Core ist ein flexibles Plugin-System für Minecraft-Server, das folgende Bereiche abdeckt:
+
+- **Plot-Management** - Verwaltung von Grundstücken mit verschiedenen Funktionen (Handelsgilden, Lager, etc.)
+- **Wirtschaftssystem** - Handel, Preise und Währungsverwaltung
+- **NPC-Integration** - Citizens-basierte NPCs für Händler und Quests
+- **Item-Management** - Unterstützung für Vanilla-Items und MMOItems
+
+Das System ist modular aufgebaut: Das Core-Plugin stellt die Basis-Funktionalität bereit, während optionale Module Integrationen mit anderen Plugins (Towny, Vault, Citizens) ermöglichen.
+
+---
+
+## Installation
+
+### Voraussetzungen
+
+- **Minecraft Server:** Spigot/Paper 1.20 oder höher
+- **Java:** 17 oder höher
+- **Maven:** 3.8+ (nur für Build aus Quellcode)
+
+### Server-Installation
+
+1. **Plugin herunterladen**
+   ```bash
+   # Download der neuesten Release (noch nicht verfügbar)
+   # Oder Build aus Quellcode (siehe unten)
+   ```
+
+2. **In plugins-Ordner kopieren**
+   ```bash
+   cp fallenstar-core-1.0.0.jar /path/to/server/plugins/
+   ```
+
+3. **Server (neu)starten**
+   ```bash
+   java -jar spigot.jar
+   ```
+
+4. **Optional: Module installieren**
+   ```bash
+   # Für Towny-Integration
+   cp module-towny-1.0.0.jar /path/to/server/plugins/
+
+   # Für Vault-Integration
+   cp module-vault-1.0.0.jar /path/to/server/plugins/
+
+   # Für Citizens-Integration
+   cp module-citizens-1.0.0.jar /path/to/server/plugins/
+   ```
+
+### Build aus Quellcode
+
+```bash
+# Repository klonen
+git clone https://github.com/[USERNAME]/fallenstar-core.git
+cd fallenstar-core
+
+# Build mit Maven
+mvn clean package
+
+# JAR-Dateien befinden sich in:
+# - core/target/fallenstar-core-1.0.0.jar
+# - module-*/target/module-*.jar
+```
+
+---
+
+## Features
+
+### ✅ Implementiert (Sprint 20)
+
+#### Core-Framework
+- **Provider-System** - Graceful Degradation für optionale Dependencies
+- **Universal GUI-System** - Dynamische Inventar-GUIs für alle Plot-Typen
+- **Plot-Aktionen** - Erweiterbare Command-Pattern-Implementierung
+- **Trait-Komposition** - Flexible Plot-Funktionalität durch Trait-Interfaces
+
+#### Plot-Typen (Basis)
+- **PlotNamed** - Plots mit Namen-Verwaltung
+- **PlotIsContainerForStorage** - Plots mit Lager-Funktion
+- **PlotIsContainerForNpc** - Plots mit NPC-Verwaltung
+
+#### Verfügbare Plot-Aktionen
+- **Namen ändern** - Owner können Plot-Namen anpassen
+
+### 🚧 In Entwicklung (Sprint 21+)
+
+- **Storage-Verwaltung** - Lager öffnen, Preise setzen
+- **NPC-Verwaltung** - NPCs spawnen, entfernen, konfigurieren
+- **Teleport-System** - Zu Plots teleportieren
+- **Persistenz** - Plot-Daten in Datenbank speichern
+- **Wirtschafts-Features** - Handels-Steuern, Shop-Verwaltung
+
+---
+
+## Commands
+
+> **Hinweis:** Commands werden in Sprint 21+ implementiert.
+
+### Geplante Commands
+
+```
+/plot create <typ>        - Erstellt einen neuen Plot
+/plot delete <id>         - Löscht einen Plot
+/plot info <id>           - Zeigt Plot-Informationen
+/plot list                - Listet eigene Plots
+/plot manage <id>         - Öffnet Plot-Verwaltungs-GUI
+/plot tp <id>             - Teleportiert zu einem Plot
+```
+
+---
+
+## Konfiguration
+
+> **Hinweis:** Konfiguration wird in Sprint 21+ implementiert.
+
+### Geplante Konfiguration
+
+```yaml
+# config.yml (Beispiel)
+plots:
+  max-per-player: 5
+  default-storage-size: 54
+
+economy:
+  enabled: true
+  currency: "Taler"
+
+npcs:
+  enabled: true
+  auto-despawn: true
+```
+
+---
+
+## Module
+
+FallenStar Core nutzt ein modulares System: Das Core-Plugin funktioniert eigenständig, Module erweitern die Funktionalität durch Integration mit anderen Plugins.
+
+### Verfügbare Module
+
+| Modul | Beschreibung | Abhängigkeit | Status |
+|-------|--------------|--------------|--------|
+| **core** | Basis-Framework mit Plot-, UI- und Event-Systemen | - | ✅ Aktiv |
+| **module-towny** | Integration mit Towny für Stadt-Plot-Verknüpfung | [Towny](https://github.com/TownyAdvanced/Towny) | ✅ Aktiv |
+| **module-vault** | Wirtschafts-Integration über Vault API | [Vault](https://github.com/MilkBowl/Vault) | ✅ Aktiv |
+| **module-citizens** | NPC-Spawning über Citizens | [Citizens](https://github.com/CitizensDev/Citizens2) | ✅ Aktiv |
+| **module-mmoitems** | Custom-Item-Integration | [MMOItems](https://github.com/Ssomar-Developement/MMOItems) | ⏸️ Deaktiviert |
+
+### Module installieren
+
+Module sind **optional**. Wenn ein Modul fehlt, läuft das Core-Plugin mit reduzierter Funktionalität weiter (Graceful Degradation).
+
+**Beispiel:**
+- Ohne `module-vault`: Economy-Features nutzen Fallback-Implementierung
+- Ohne `module-citizens`: NPCs können nicht gespawnt werden (Funktion deaktiviert)
+- Ohne `module-towny`: Plot-System funktioniert unabhängig von Towny
+
+---
+
+## Entwicklung
+
+### Projekt-Status
+
+**Aktueller Sprint:** Sprint 20 (abgeschlossen)
+
+**Abgeschlossene Phasen:**
 - ✅ Maven Multi-Module Struktur
 - ✅ Provider-System mit Graceful Degradation
 - ✅ Self-Rendering Pattern (GuiRenderable)
@@ -17,215 +197,64 @@
 - ✅ Trait-Komposition (PlotNamed, PlotIsContainerForStorage, PlotIsContainerForNpc)
 - ✅ Universal GuiBuilder
 - ✅ Proof-of-Concept validiert (PlotActionSetName)
-- ✅ 146 Unit & Integration Tests
-- ✅ ~95% Code Coverage
+
+**Test-Metriken:**
+- Tests: 146/146 ✅
+- Code Coverage: ~95%
+- Build: SUCCESS
 
 **Nächste Schritte (Sprint 21+):**
 - Konkrete PlotActions (Storage, NPC, Teleport)
 - Persistenz-Layer (Plot-Manager, Datenbank)
 - Provider-Implementierungen (Towny, Vault, Citizens)
+- Commands & Konfiguration
 
----
+### Build & Tests
 
-## Projektübersicht
+```bash
+# Tests ausführen
+mvn clean test
 
-FallenStar Core ist ein modulares Minecraft-Plugin-System mit Fokus auf:
+# Package mit allen Tests
+mvn clean package
 
-- **Plot-Management** (Grundstücke mit verschiedenen Funktionen)
-- **Wirtschaftssystem** (Handel, Preise, Währungen)
-- **NPC-Integration** (Citizens-Integration für Händler und Quests)
-- **Item-Management** (Vanilla + MMOItems-Support)
-
----
-
-## Architektur-Philosophie
-
-### Modularer Aufbau
-
-```
-core/              - Core-Plugin mit Interfaces und UI-Framework
-                     (Plot-, Economy-, UI-, NPC-Systeme)
-module-towny/      - Towny-Integration (Städte/Towns)
-module-citizens/   - Citizens-Integration (NPC-Spawning)
-module-vault/      - Vault-Integration (Economy-Provider)
-module-mmoitems/   - MMOItems-Integration (Custom Items) [temporär deaktiviert]
+# Coverage-Report generieren
+mvn clean verify
+# Report: target/site/jacoco/index.html
 ```
 
-### Provider-Pattern (Graceful Degradation)
+### Architektur
 
-**Core = Framework, Module = Integrationen**
+Das Projekt folgt modernen Design-Prinzipien:
 
-Das Core-Plugin enthält alle Basis-Systeme (Plot, Economy, UI, NPC).
-Die Module sind optionale Adapter für externe Plugins:
+- **Trait-Komposition** statt Vererbung
+- **Self-Rendering Pattern** für UI-Komponenten
+- **Command Pattern** für Plot-Aktionen
+- **Provider Pattern** für optionale Dependencies
+- **SOLID-Prinzipien** konsequent angewendet
 
-- **module-towny** - Verbindet Towny-Städte mit FallenStar Plot-System
-- **module-vault** - Nutzt Vault für Economy-Transaktionen
-- **module-citizens** - Spawnt NPCs über Citizens
-- **module-mmoitems** - Integriert MMOItems Custom Items *(aktuell deaktiviert)*
-
-Wenn ein Modul fehlt, läuft das Core-System mit NoOp-Fallback weiter (Graceful Degradation).
-
----
-
-## Kern-Prinzipien
-
-### 1. Trait-basierte Komposition
-
-```java
-interface PlotNamed { ... }
-interface PlotIsContainerForStorage { ... }
-interface PlotIsContainerForNpc { ... }
-
-class TradeguildPlot implements PlotNamed, PlotIsContainerForStorage, PlotIsContainerForNpc {
-    // Kombiniert alle Traits
-    List<PlotAction> getAvailablePlotActions() {
-        return Stream.of(
-            getNameActions(),      // PlotNamed
-            getStorageActions(),   // PlotIsContainerForStorage
-            getNpcActions()        // PlotIsContainerForNpc
-        ).flatMap(List::stream).toList();
-    }
-}
-```
-
-### 2. Self-Rendering Pattern
-
-Objekte rendern sich selbst, keine separaten UI-Klassen:
-
-```java
-class PlotAction implements GuiRenderable {
-    ItemStack getDisplayItem() { ... }
-    void execute(Player player) { ... }
-}
-```
-
-### 3. Command Pattern
-
-Aktionen als First-Class Objects:
-
-```java
-abstract class PlotAction {
-    boolean canExecute(Player player);
-    void execute(Player player);
-    ItemStack getDisplayItem();
-}
-```
-
-### 4. Universal Builder
-
-Ein GUI-System für alle Plot-Typen:
-
-```java
-GuiBuilder.buildFromActions(plot.getAvailablePlotActions(), player);
-```
-
----
-
-## Design-Erkenntnisse
-
-Dieses Projekt wurde ursprünglich in sehr kurzer Zeit AI-generiert und war inkonsistent. Die folgenden Erkenntnisse wurden während des Refactorings gewonnen:
-
-### ✅ Was funktioniert
-
-- **Trait-Komposition** statt tiefer Vererbungshierarchien
-- **Self-Rendering Pattern** eliminiert UI-Klassen-Explosion
-- **GuiBuilder** ermöglicht universelle, erweiterbare UIs
-- **MenuAction-Interface** für hierarchische Menüs
-
-### ❌ Vermiedene Anti-Patterns
-
-- Plot-spezifische UI-Klassen (`TradeguildUi`, `StoragePlotUi`)
-- `instanceof`-Ketten statt Polymorphismus
-- Reflection statt direkte Dependencies
-- Datenspeicher-Mismatch (verschiedene Quellen für gleiche Daten)
-
-### 🔄 Refactoring-Schwerpunkte
-
-| Bereich | Problem | Lösung |
-|---------|---------|--------|
-| **Items** | CoinProvider hart-kodiert | CurrencyItem Interface + Registry |
-| **Plots** | Preis-Logik nur in PlotContainerStorage | Priceable Interface + Manager |
-| **NPCs** | Manuelle UI-Konstruktion | NpcAction + GuiBuilder |
-| **Economy** | TradeUI nicht GuiRenderable-konform | TradeAction mit Self-Rendering |
-
----
-
-## Entwicklungs-Konventionen
-
-### Vor JEDER Implementierung prüfen
-
-- [ ] Funktioniert universal (nicht typ-spezifisch)?
-- [ ] Erweiterbar ohne Code-Änderungen (Open/Closed Principle)?
-- [ ] Nutzt Self-Rendering Pattern?
-- [ ] Keine `instanceof`-Checks?
-- [ ] Keine hart-kodierten Dependencies?
-
-### Namenskonventionen
-
-**Hierarchie muss erkennbar sein:**
-
-```
-✅ PlotAction → PlotActionSetName
-❌ SetNameAction → PlotAction
-```
-
-Siehe: [CONVENTIONS_NAMING.md](CONVENTIONS_NAMING.md)
-
-### Code-Prinzipien
-
-- **SOLID-Prinzipien** konsequent anwenden
-- **Design Patterns** für wiederkehrende Probleme
-- **Keine Reflection** außer absolut notwendig
-- **Single Source of Truth** für Daten
-
-Siehe: [CONVENTIONS_CODE.md](CONVENTIONS_CODE.md)
-
----
-
-## Historie & Kontext
-
-### Ursprung
-
-Das Projekt wurde aus einem AI-generierten Prototyp ("fs-core-sample-dump") extrahiert, der folgende Probleme hatte:
-
-- **Inkonsistente Architektur** durch iteratives Design
-- **Zersplitterte Konzepte** (Preis-Logik an mehreren Stellen)
-- **UI-Klassen-Explosion** (eine Klasse pro Plot-Typ)
-- **Datenspeicher-Mismatch** (Storage-Price-Loop-Bug)
-
-### Sprint 18 Durchbruch
-
-Die Einführung des **GuiBuilder + PlotAction + Trait-Pattern** löste die Architektur-Probleme:
-
-- Ein System für alle Plot-Typs
-- Erweiterbar ohne Core-Änderungen
-- Self-Documenting durch naming conventions
-
-### Neuinitialisierung (Aktuell)
-
-Dieses Repository ist eine **saubere Neuinitialisierung** mit:
-
-- Nur den bewährten Design-Erkenntnissen
-- Ohne Legacy-Code-Ballast
-- Fokus auf klare Architektur von Anfang an
-
----
-
-## Nächste Schritte
-
-1. **Core-Module strukturieren** (Interfaces, Base-Klassen)
-2. **Plot-System implementieren** (Trait-basiert)
-3. **Economy-Module** (Provider-Pattern)
-4. **NPC-Integration** (GuiRenderable-konform)
-5. **Item-System** (CurrencyRegistry)
+Details zur Architektur: [CONVENTIONS_CODE.md](CONVENTIONS_CODE.md)
 
 ---
 
 ## Dokumentation
 
+### Für Benutzer
+- **[README.md](README.md)** (diese Datei) - Installation, Features, Commands
+
+### Für Entwickler
+- **[CLAUDE.md](CLAUDE.md)** - KI-Kontext & Arbeitsweise
 - **[CONVENTIONS_NAMING.md](CONVENTIONS_NAMING.md)** - Namenskonventionen
-- **[CONVENTIONS_CODE.md](CONVENTIONS_CODE.md)** - Code-Prinzipien & Patterns
-- **[ERKENNTNISSE.md](ERKENNTNISSE.md)** - Sprint-Learnings & Evolution
+- **[CONVENTIONS_CODE.md](CONVENTIONS_CODE.md)** - Code-Prinzipien & Design Patterns
+- **[ERKENNTNISSE.md](ERKENNTNISSE.md)** - Sprint-Learnings & Architektur-Evolution
+
+### API-Dokumentation
+
+```bash
+# JavaDoc generieren
+mvn javadoc:javadoc
+# Output: target/site/apidocs/index.html
+```
 
 ---
 
@@ -235,6 +264,12 @@ Dieses Repository ist eine **saubere Neuinitialisierung** mit:
 
 ---
 
-## Kontakt
+## Kontakt & Support
 
 *TBD*
+
+---
+
+## Credits
+
+Entwickelt mit Unterstützung von [Claude Code](https://claude.com/claude-code).

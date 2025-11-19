@@ -8,7 +8,7 @@
 
 Lies IMMER diese Dateien zu Beginn einer neuen Sitzung:
 
-1. **[README.md](README.md)** - Projektübersicht, Architektur-Philosophie, Historie
+1. **[README.md](README.md)** - Benutzer-Dokumentation (Installation, Features, Commands - IMMER aktuell halten!)
 2. **[CONVENTIONS_NAMING.md](CONVENTIONS_NAMING.md)** - Namenskonventionen (Hierarchie-Erkennbarkeit)
 3. **[CONVENTIONS_CODE.md](CONVENTIONS_CODE.md)** - SOLID-Prinzipien, Design Patterns, Anti-Patterns
 4. **[ERKENNTNISSE.md](ERKENNTNISSE.md)** - Sprint-Learnings, Bug-Analysen, Evolution
@@ -174,8 +174,96 @@ Phase: Komponente X implementieren
 ├─> 3. mvn clean test ausführen
 ├─> 4. Fehler fixen (falls vorhanden)
 ├─> 5. Dokumentation auf Deutsch aktualisieren
-├─> 6. mvn clean package ausführen (Final-Check)
-└─> 7. Phase als abgeschlossen markieren
+├─> 6. README.md mit neuem Feature aktualisieren (PFLICHT - siehe unten)
+├─> 7. mvn clean package ausführen (Final-Check)
+└─> 8. Phase als abgeschlossen markieren
+```
+
+#### Benutzer-Dokumentation (PFLICHT)
+
+**Hohe Priorität:** Vollständige, prägnante Dokumentation ist ein Kern-Qualitätsmerkmal!
+
+**README.md ist für Menschen, nicht für KI:**
+- README.md richtet sich an **Endbenutzer und Server-Admins**
+- Fokus auf Installation, Features, Commands, Konfiguration
+- Entwicklungs-Details gehören in dedizierte Dateien (siehe Dokumentations-Struktur)
+
+**Regel: Jedes neue Feature MUSS in README.md dokumentiert werden!**
+
+**Was dokumentieren?**
+
+1. **Neue Features → Sektion "Features"**
+   ```markdown
+   ### ✅ Implementiert (Sprint 21)
+   - **Storage-Verwaltung** - Lager öffnen, Preise setzen
+   ```
+
+2. **Neue Commands → Sektion "Commands"**
+   ```markdown
+   /plot storage open <id>     - Öffnet Plot-Lager
+   /plot storage price <preis> - Setzt Zugriffspreis
+   ```
+
+3. **Neue Konfigurationsoptionen → Sektion "Konfiguration"**
+   ```yaml
+   storage:
+     default-price: 100
+     max-items: 54
+   ```
+
+4. **Neue Module → Sektion "Module"**
+   ```markdown
+   | **module-xyz** | XYZ-Integration | [XYZ](link) | ✅ Aktiv |
+   ```
+
+**Wie dokumentieren?**
+
+- **Vollständig:** Alle Parameter, alle Optionen, alle Beispiele
+- **Prägnant:** Kurz und klar, keine Romane
+- **Benutzerfreundlich:** Aus Sicht des Anwenders, nicht des Entwicklers
+- **Aktuell:** Bei jedem Feature-Update sofort aktualisieren
+
+**Beispiel für gute Feature-Dokumentation:**
+
+```markdown
+### ✅ Storage-Verwaltung
+
+Jeder Plot kann ein Lager mit bis zu 54 Items haben.
+
+**Features:**
+- Lager öffnen per Command oder GUI
+- Zugriffspreis festlegen (Economy-Integration)
+- Automatisches Inventar-Management
+
+**Commands:**
+- `/plot storage open <id>` - Öffnet dein Plot-Lager
+- `/plot storage price <preis>` - Setzt Zugriffspreis für andere Spieler
+- `/plot storage share <player>` - Gibt Spieler Zugriff
+
+**Konfiguration:**
+```yaml
+storage:
+  enabled: true
+  default-size: 54
+  max-price: 10000
+```
+
+**Workflow-Ergänzung:**
+
+Nach Implementierung eines Features:
+1. Code + Tests schreiben ✅
+2. **README.md aktualisieren** ← PFLICHT!
+3. JavaDoc für APIs schreiben
+4. ERKENNTNISSE.md für Entwicklungs-Details
+5. Build + Commit
+
+**Checkliste vor Commit:**
+```
+[ ] Feature funktioniert und ist getestet
+[ ] README.md enthält Feature-Beschreibung
+[ ] README.md enthält Commands (falls vorhanden)
+[ ] README.md enthält Konfiguration (falls vorhanden)
+[ ] Alle Beispiele funktionieren
 ```
 
 #### Test-Konventionen
@@ -260,6 +348,7 @@ Modulares Minecraft-Plugin-System mit Fokus auf:
 [ ] Keine instanceof-Checks?
 [ ] Keine hart-kodierten Dependencies?
 [ ] Keine Reflection (außer absolut unvermeidbar)?
+[ ] README.md wird mit Feature aktualisiert? (PFLICHT!)
 ```
 
 ---
@@ -339,14 +428,14 @@ GuiBuilder.buildFromActions(plot.getAvailablePlotActions(), player);
 
 ## 📚 Dokumentations-Struktur
 
-| Datei | Zweck | Wann lesen? |
-|-------|-------|-------------|
-| **CLAUDE.md** | Entrypoint, Quick Reference, Arbeitsweise | Jede neue Sitzung (IMMER zuerst) |
-| **README.md** | Projektübersicht, Kontext | Bei Projektfragen |
-| **CONVENTIONS_NAMING.md** | Naming-Regeln | Vor Klassen/Interface-Erstellung |
-| **CONVENTIONS_CODE.md** | Design Patterns, SOLID | Vor Implementierung |
-| **ERKENNTNISSE.md** | Sprint-Historie, Learnings | Bei Architektur-Entscheidungen |
-| **SPRINT_CURRENT.md** | Aktueller Sprint-Status (optional) | Bei Sprint-Fortsetzung |
+| Datei | Zweck | Zielgruppe | Wann aktualisieren? |
+|-------|-------|------------|---------------------|
+| **CLAUDE.md** | Entrypoint, Quick Reference, Arbeitsweise | KI / Entwickler | Bei neuen Patterns/Regeln |
+| **README.md** | Installation, Features, Commands, Konfiguration | Endbenutzer / Admins | **Bei JEDEM Feature** (PFLICHT!) |
+| **CONVENTIONS_NAMING.md** | Naming-Regeln | KI / Entwickler | Bei neuen Konventionen |
+| **CONVENTIONS_CODE.md** | Design Patterns, SOLID | KI / Entwickler | Bei neuen Patterns |
+| **ERKENNTNISSE.md** | Sprint-Historie, Learnings, Bugs | KI / Entwickler | Am Ende jedes Sprints |
+| **SPRINT_CURRENT.md** | Aktueller Sprint-Status (optional) | KI / Entwickler | Während Sprint |
 
 ---
 
