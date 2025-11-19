@@ -8,8 +8,8 @@
 
 Lies IMMER diese Dateien zu Beginn einer neuen Sitzung:
 
-1. **[README.md](README.md)** - Projektübersicht, Architektur-Philosophie, Historie
-2. **[CONVENTIONS_NAMING.md](CONVENTIONS_NAMING.md)** - Namenskonventionen (Hierarchie-Erkennbarkeit)
+1. **[README.md](README.md)** - Benutzer-Dokumentation (Installation, Features, Commands - IMMER aktuell halten!)
+2. **[CONVENTIONS_NAMING.md](CONVENTIONS_NAMING.md)** - Namenskonventionen (Prefix/Suffix-Pattern, Package-Struktur)
 3. **[CONVENTIONS_CODE.md](CONVENTIONS_CODE.md)** - SOLID-Prinzipien, Design Patterns, Anti-Patterns
 4. **[ERKENNTNISSE.md](ERKENNTNISSE.md)** - Sprint-Learnings, Bug-Analysen, Evolution
 
@@ -52,23 +52,24 @@ Sprint N
 #### Beispiel: Sprint-Ablauf
 
 ```markdown
-## Sprint 20: Core-Interfaces Implementierung
+## Sprint 1: Core-Foundation Etablierung
 
 ### Initiale Phasen (Start)
-1. GuiRenderable Interface erstellen
-2. PlotAction Basisklasse implementieren
-3. GuiBuilder implementieren
+1. Maven Multi-Module Struktur
+2. Provider-System mit Graceful Degradation
+3. GuiRenderable Interface erstellen
 
 ### Angepasste Phasen (Während Sprint)
-1. GuiRenderable Interface erstellen ✅
-2. PlotAction Basisklasse implementieren ✅
-3. **NEU:** MenuAction Interface (Erkenntnis: Hierarchie nötig)
-4. GuiBuilder implementieren (verschoben)
-5. **NEU:** Erste PlotAction als Proof-of-Concept
+1. Maven Multi-Module Struktur ✅
+2. Provider-System ✅
+3. GuiRenderable Interface ✅
+4. **NEU:** MenuAction Interface (Erkenntnis: Hierarchie nötig)
+5. **NEU:** PlotAction Basisklasse
+6. **NEU:** Proof-of-Concept (PlotActionSetName)
 
 ### Grund für Änderungen
-- MenuAction wurde während Implementierung als kritisch erkannt
-- GuiBuilder benötigt konkrete Actions für Tests
+- MenuAction wurde während Design als kritisch erkannt
+- PlotAction als abstrakte Basis etabliert
 - Proof-of-Concept validiert Architektur früher
 ```
 
@@ -114,26 +115,26 @@ Sprint N
 **Format für Sprint-Übergabe:**
 
 ```markdown
-## Aktueller Sprint: Sprint 20
+## Aktueller Sprint: Sprint 2
 
-**Ziel:** Core-Interfaces implementieren
-**Status:** In Progress (Phase 3 von 5)
-**Nächster Schritt:** MenuAction Interface implementieren
+**Ziel:** Architektur-Refactoring (Naming & Package-Struktur)
+**Status:** In Progress (Phase 2 von 8)
+**Nächster Schritt:** Trait-Interfaces umbenennen
 
 ### Abgeschlossene Phasen
-- [x] Phase 1: GuiRenderable Interface
-- [x] Phase 2: PlotAction Basisklasse
+- [x] Phase 1: Conventions aktualisieren
 
 ### Aktuelle Phase
-- [ ] Phase 3: MenuAction Interface ← HIER
+- [ ] Phase 2: Trait-Interfaces umbenennen ← HIER
 
 ### Geplante Phasen
-- [ ] Phase 4: GuiBuilder implementieren
-- [ ] Phase 5: Proof-of-Concept PlotAction
+- [ ] Phase 3: Abstrakte Klassen erstellen
+- [ ] Phase 4: Package-Struktur etablieren
+- [ ] ...
 
 ### Erkenntnisse bisher
-- isVisible() benötigt Player-Kontext
-- requiresOwnership() Pattern bewährt sich
+- Prefix/Suffix-Pattern etabliert
+- Package-Struktur definiert (Root für Interfaces, impl/ für Klassen)
 ```
 
 #### Test-Driven Development (PFLICHT)
@@ -174,8 +175,96 @@ Phase: Komponente X implementieren
 ├─> 3. mvn clean test ausführen
 ├─> 4. Fehler fixen (falls vorhanden)
 ├─> 5. Dokumentation auf Deutsch aktualisieren
-├─> 6. mvn clean package ausführen (Final-Check)
-└─> 7. Phase als abgeschlossen markieren
+├─> 6. README.md mit neuem Feature aktualisieren (PFLICHT - siehe unten)
+├─> 7. mvn clean package ausführen (Final-Check)
+└─> 8. Phase als abgeschlossen markieren
+```
+
+#### Benutzer-Dokumentation (PFLICHT)
+
+**Hohe Priorität:** Vollständige, prägnante Dokumentation ist ein Kern-Qualitätsmerkmal!
+
+**README.md ist für Menschen, nicht für KI:**
+- README.md richtet sich an **Endbenutzer und Server-Admins**
+- Fokus auf Installation, Features, Commands, Konfiguration
+- Entwicklungs-Details gehören in dedizierte Dateien (siehe Dokumentations-Struktur)
+
+**Regel: Jedes neue Feature MUSS in README.md dokumentiert werden!**
+
+**Was dokumentieren?**
+
+1. **Neue Features → Sektion "Features"**
+   ```markdown
+   ### ✅ Implementiert (Sprint 21)
+   - **Storage-Verwaltung** - Lager öffnen, Preise setzen
+   ```
+
+2. **Neue Commands → Sektion "Commands"**
+   ```markdown
+   /plot storage open <id>     - Öffnet Plot-Lager
+   /plot storage price <preis> - Setzt Zugriffspreis
+   ```
+
+3. **Neue Konfigurationsoptionen → Sektion "Konfiguration"**
+   ```yaml
+   storage:
+     default-price: 100
+     max-items: 54
+   ```
+
+4. **Neue Module → Sektion "Module"**
+   ```markdown
+   | **module-xyz** | XYZ-Integration | [XYZ](link) | ✅ Aktiv |
+   ```
+
+**Wie dokumentieren?**
+
+- **Vollständig:** Alle Parameter, alle Optionen, alle Beispiele
+- **Prägnant:** Kurz und klar, keine Romane
+- **Benutzerfreundlich:** Aus Sicht des Anwenders, nicht des Entwicklers
+- **Aktuell:** Bei jedem Feature-Update sofort aktualisieren
+
+**Beispiel für gute Feature-Dokumentation:**
+
+```markdown
+### ✅ Storage-Verwaltung
+
+Jeder Plot kann ein Lager mit bis zu 54 Items haben.
+
+**Features:**
+- Lager öffnen per Command oder GUI
+- Zugriffspreis festlegen (Economy-Integration)
+- Automatisches Inventar-Management
+
+**Commands:**
+- `/plot storage open <id>` - Öffnet dein Plot-Lager
+- `/plot storage price <preis>` - Setzt Zugriffspreis für andere Spieler
+- `/plot storage share <player>` - Gibt Spieler Zugriff
+
+**Konfiguration:**
+```yaml
+storage:
+  enabled: true
+  default-size: 54
+  max-price: 10000
+```
+
+**Workflow-Ergänzung:**
+
+Nach Implementierung eines Features:
+1. Code + Tests schreiben ✅
+2. **README.md aktualisieren** ← PFLICHT!
+3. JavaDoc für APIs schreiben
+4. ERKENNTNISSE.md für Entwicklungs-Details
+5. Build + Commit
+
+**Checkliste vor Commit:**
+```
+[ ] Feature funktioniert und ist getestet
+[ ] README.md enthält Feature-Beschreibung
+[ ] README.md enthält Commands (falls vorhanden)
+[ ] README.md enthält Konfiguration (falls vorhanden)
+[ ] Alle Beispiele funktionieren
 ```
 
 #### Test-Konventionen
@@ -260,6 +349,7 @@ Modulares Minecraft-Plugin-System mit Fokus auf:
 [ ] Keine instanceof-Checks?
 [ ] Keine hart-kodierten Dependencies?
 [ ] Keine Reflection (außer absolut unvermeidbar)?
+[ ] README.md wird mit Feature aktualisiert? (PFLICHT!)
 ```
 
 ---
@@ -318,10 +408,10 @@ abstract class PlotAction implements GuiRenderable {
 ### 3. Trait-Komposition
 
 ```java
-interface NamedPlot { List<PlotAction> getNameActions(); }
-interface StorageContainerPlot { List<PlotAction> getStorageActions(); }
+interface PlotNamed { List<PlotAction> getNameActions(); }
+interface PlotContainerStorage { List<PlotAction> getStorageActions(); }
 
-class TradeguildPlot implements NamedPlot, StorageContainerPlot {
+class TradeguildPlot implements PlotNamed, PlotContainerStorage {
     List<PlotAction> getAvailablePlotActions() {
         return Stream.of(getNameActions(), getStorageActions())
             .flatMap(List::stream).toList();
@@ -339,14 +429,14 @@ GuiBuilder.buildFromActions(plot.getAvailablePlotActions(), player);
 
 ## 📚 Dokumentations-Struktur
 
-| Datei | Zweck | Wann lesen? |
-|-------|-------|-------------|
-| **CLAUDE.md** | Entrypoint, Quick Reference, Arbeitsweise | Jede neue Sitzung (IMMER zuerst) |
-| **README.md** | Projektübersicht, Kontext | Bei Projektfragen |
-| **CONVENTIONS_NAMING.md** | Naming-Regeln | Vor Klassen/Interface-Erstellung |
-| **CONVENTIONS_CODE.md** | Design Patterns, SOLID | Vor Implementierung |
-| **ERKENNTNISSE.md** | Sprint-Historie, Learnings | Bei Architektur-Entscheidungen |
-| **SPRINT_CURRENT.md** | Aktueller Sprint-Status (optional) | Bei Sprint-Fortsetzung |
+| Datei | Zweck | Zielgruppe | Wann aktualisieren? |
+|-------|-------|------------|---------------------|
+| **CLAUDE.md** | Entrypoint, Quick Reference, Arbeitsweise | KI / Entwickler | Bei neuen Patterns/Regeln |
+| **README.md** | Installation, Features, Commands, Konfiguration | Endbenutzer / Admins | **Bei JEDEM Feature** (PFLICHT!) |
+| **CONVENTIONS_NAMING.md** | Naming-Regeln | KI / Entwickler | Bei neuen Konventionen |
+| **CONVENTIONS_CODE.md** | Design Patterns, SOLID | KI / Entwickler | Bei neuen Patterns |
+| **ERKENNTNISSE.md** | Sprint-Historie, Learnings, Bugs | KI / Entwickler | Am Ende jedes Sprints |
+| **SPRINT_CURRENT.md** | Aktueller Sprint-Status (optional) | KI / Entwickler | Während Sprint |
 
 ---
 
@@ -430,12 +520,20 @@ class MenuAction extends PlotAction
 
 ## 🔄 Projekt-Status
 
-**Phase:** Neuinitialisierung aus alten Artefakten
-**Basis:** Erkenntnisse aus fs-core-sample-dump (AI-generierter Prototyp)
-**Ziel:** Saubere Implementierung ohne Legacy-Ballast
+**Aktueller Sprint:** Sprint 2 - Architektur-Refactoring
+**Letzter abgeschlossener Sprint:** Sprint 1 - Core-Foundation
 
-**Initialisiert:** 2025-11-19
-**Nächste Schritte:** Core-Interfaces implementieren (siehe README.md)
+**Sprint 1 Achievements:**
+- ✅ Maven Multi-Module Struktur
+- ✅ Provider-System mit Graceful Degradation
+- ✅ Self-Rendering Pattern (GuiRenderable)
+- ✅ Command Pattern (PlotAction)
+- ✅ Trait-Komposition (PlotNamed, PlotIsContainerForStorage, PlotIsContainerForNpc)
+- ✅ Universal GuiBuilder
+- ✅ Proof-of-Concept (PlotActionSetName)
+
+**Sprint 2 Ziel:** Architektur-Refactoring (Naming Conventions & Package-Struktur)
+**Sprint 3 Geplant:** Command-System (Invokable-Pattern)
 
 ---
 

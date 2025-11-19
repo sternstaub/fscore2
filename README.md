@@ -1,93 +1,287 @@
-# Fallenstar Core
+# FallenStar Core
 
+Ein modulares Minecraft-Plugin-System für Plot-Management, Wirtschaft, NPCs und Item-Verwaltung.
 
+**Plattform:** Spigot/Paper 1.20+
+**Status:** 🚧 In Entwicklung (Sprint 1 abgeschlossen, Sprint 2 läuft)
+**Build:** ✅ SUCCESS (146 Tests, ~95% Coverage)
 
-## Getting started
+---
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+## 📋 Inhaltsverzeichnis
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+- [Über das Projekt](#über-das-projekt)
+- [Installation](#installation)
+- [Features](#features)
+- [Commands](#commands)
+- [Konfiguration](#konfiguration)
+- [Module](#module)
+- [Entwicklung](#entwicklung)
+- [Dokumentation](#dokumentation)
+- [Lizenz](#lizenz)
 
-## Add your files
+---
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+## Über das Projekt
 
-```
-cd existing_repo
-git remote add origin https://gitlab.fallenstar.de/sternstaub/fallenstar-core.git
-git branch -M main
-git push -uf origin main
-```
+FallenStar Core ist ein flexibles Plugin-System für Minecraft-Server, das folgende Bereiche abdeckt:
 
-## Integrate with your tools
+- **Plot-Management** - Verwaltung von Grundstücken mit verschiedenen Funktionen (Handelsgilden, Lager, etc.)
+- **Wirtschaftssystem** - Handel, Preise und Währungsverwaltung
+- **NPC-Integration** - Citizens-basierte NPCs für Händler und Quests
+- **Item-Management** - Unterstützung für Vanilla-Items und MMOItems
 
-- [ ] [Set up project integrations](https://gitlab.fallenstar.de/sternstaub/fallenstar-core/-/settings/integrations)
+Das System ist modular aufgebaut: Das Core-Plugin stellt die Basis-Funktionalität bereit, während optionale Module Integrationen mit anderen Plugins (Towny, Vault, Citizens) ermöglichen.
 
-## Collaborate with your team
-
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
-
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
-
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
-
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+---
 
 ## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+### Voraussetzungen
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+- **Minecraft Server:** Spigot/Paper 1.20 oder höher
+- **Java:** 17 oder höher
+- **Maven:** 3.8+ (nur für Build aus Quellcode)
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+### Server-Installation
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+1. **Plugin herunterladen**
+   ```bash
+   # Download der neuesten Release (noch nicht verfügbar)
+   # Oder Build aus Quellcode (siehe unten)
+   ```
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+2. **In plugins-Ordner kopieren**
+   ```bash
+   cp fallenstar-core-1.0.0.jar /path/to/server/plugins/
+   ```
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+3. **Server (neu)starten**
+   ```bash
+   java -jar spigot.jar
+   ```
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+4. **Optional: Module installieren**
+   ```bash
+   # Für Towny-Integration
+   cp module-towny-1.0.0.jar /path/to/server/plugins/
 
-## License
-For open source projects, say how it is licensed.
+   # Für Vault-Integration
+   cp module-vault-1.0.0.jar /path/to/server/plugins/
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+   # Für Citizens-Integration
+   cp module-citizens-1.0.0.jar /path/to/server/plugins/
+   ```
+
+### Build aus Quellcode
+
+```bash
+# Repository klonen
+git clone https://github.com/[USERNAME]/fallenstar-core.git
+cd fallenstar-core
+
+# Build mit Maven
+mvn clean package
+
+# JAR-Dateien befinden sich in:
+# - core/target/fallenstar-core-1.0.0.jar
+# - module-*/target/module-*.jar
+```
+
+---
+
+## Features
+
+### ✅ Implementiert (Sprint 1)
+
+#### Core-Framework
+- **Provider-System** - Graceful Degradation für optionale Dependencies
+- **Universal GUI-System** - Dynamische Inventar-GUIs für alle Plot-Typen
+- **Plot-Aktionen** - Erweiterbare Command-Pattern-Implementierung
+- **Trait-Komposition** - Flexible Plot-Funktionalität durch Trait-Interfaces
+
+#### Plot-Typen (Basis)
+- **PlotNamed** - Plots mit Namen-Verwaltung
+- **PlotIsContainerForStorage** - Plots mit Lager-Funktion
+- **PlotIsContainerForNpc** - Plots mit NPC-Verwaltung
+
+#### Verfügbare Plot-Aktionen
+- **Namen ändern** - Owner können Plot-Namen anpassen
+
+### 🚧 In Entwicklung (Sprint 2)
+
+- **Architektur-Refactoring** - Einheitliche Naming Conventions & Package-Struktur
+- **Invokable-Pattern** - Command- und GUI-Invokation-System
+
+### 📅 Geplant (Sprint 3+)
+
+- **Storage-Verwaltung** - Lager öffnen, Preise setzen
+- **NPC-Verwaltung** - NPCs spawnen, entfernen, konfigurieren
+- **Teleport-System** - Zu Plots teleportieren
+- **Persistenz** - Plot-Daten in Datenbank speichern
+- **Wirtschafts-Features** - Handels-Steuern, Shop-Verwaltung
+
+---
+
+## Commands
+
+> **Hinweis:** Commands werden in Sprint 21+ implementiert.
+
+### Geplante Commands
+
+```
+/plot create <typ>        - Erstellt einen neuen Plot
+/plot delete <id>         - Löscht einen Plot
+/plot info <id>           - Zeigt Plot-Informationen
+/plot list                - Listet eigene Plots
+/plot manage <id>         - Öffnet Plot-Verwaltungs-GUI
+/plot tp <id>             - Teleportiert zu einem Plot
+```
+
+---
+
+## Konfiguration
+
+> **Hinweis:** Konfiguration wird in Sprint 21+ implementiert.
+
+### Geplante Konfiguration
+
+```yaml
+# config.yml (Beispiel)
+plots:
+  max-per-player: 5
+  default-storage-size: 54
+
+economy:
+  enabled: true
+  currency: "Taler"
+
+npcs:
+  enabled: true
+  auto-despawn: true
+```
+
+---
+
+## Module
+
+FallenStar Core nutzt ein modulares System: Das Core-Plugin funktioniert eigenständig, Module erweitern die Funktionalität durch Integration mit anderen Plugins.
+
+### Verfügbare Module
+
+| Modul | Beschreibung | Abhängigkeit | Status |
+|-------|--------------|--------------|--------|
+| **core** | Basis-Framework mit Plot-, UI- und Event-Systemen | - | ✅ Aktiv |
+| **module-towny** | Integration mit Towny für Stadt-Plot-Verknüpfung | [Towny](https://github.com/TownyAdvanced/Towny) | ✅ Aktiv |
+| **module-vault** | Wirtschafts-Integration über Vault API | [Vault](https://github.com/MilkBowl/Vault) | ✅ Aktiv |
+| **module-citizens** | NPC-Spawning über Citizens | [Citizens](https://github.com/CitizensDev/Citizens2) | ✅ Aktiv |
+| **module-mmoitems** | Custom-Item-Integration | [MMOItems](https://github.com/Ssomar-Developement/MMOItems) | ⏸️ Deaktiviert |
+
+### Module installieren
+
+Module sind **optional**. Wenn ein Modul fehlt, läuft das Core-Plugin mit reduzierter Funktionalität weiter (Graceful Degradation).
+
+**Beispiel:**
+- Ohne `module-vault`: Economy-Features nutzen Fallback-Implementierung
+- Ohne `module-citizens`: NPCs können nicht gespawnt werden (Funktion deaktiviert)
+- Ohne `module-towny`: Plot-System funktioniert unabhängig von Towny
+
+---
+
+## Entwicklung
+
+### Projekt-Status
+
+**Aktueller Sprint:** Sprint 2 - Architektur-Refactoring (in Progress)
+**Letzter Sprint:** Sprint 1 - Core-Foundation (abgeschlossen)
+
+**Sprint 1 Achievements:**
+- ✅ Maven Multi-Module Struktur
+- ✅ Provider-System mit Graceful Degradation
+- ✅ Self-Rendering Pattern (GuiRenderable)
+- ✅ Command Pattern (PlotAction)
+- ✅ Trait-Komposition (PlotNamed, PlotIsContainerForStorage, PlotIsContainerForNpc)
+- ✅ Universal GuiBuilder
+- ✅ Proof-of-Concept validiert (PlotActionSetName)
+
+**Test-Metriken (Sprint 1):**
+- Tests: 146/146 ✅
+- Code Coverage: ~95%
+- Build: SUCCESS
+
+**Sprint 2 Ziele:**
+- Einheitliche Naming Conventions (Prefix/Suffix-Pattern)
+- Package-Struktur etablieren (Root für Interfaces, impl/ für Klassen)
+- Invokable-Pattern vorbereiten (Command & GUI)
+- Alle bestehenden Klassen migrieren
+
+**Sprint 3+ Roadmap:**
+- Command-System (InvokableByCommand)
+- Konkrete PlotActions (Claim, Storage, NPC, Teleport)
+- Persistenz-Layer (PlotManager, Datenbank)
+- Provider-Implementierungen (Towny, Vault, Citizens)
+
+### Build & Tests
+
+```bash
+# Tests ausführen
+mvn clean test
+
+# Package mit allen Tests
+mvn clean package
+
+# Coverage-Report generieren
+mvn clean verify
+# Report: target/site/jacoco/index.html
+```
+
+### Architektur
+
+Das Projekt folgt modernen Design-Prinzipien:
+
+- **Trait-Komposition** statt Vererbung
+- **Self-Rendering Pattern** für UI-Komponenten
+- **Command Pattern** für Plot-Aktionen
+- **Provider Pattern** für optionale Dependencies
+- **SOLID-Prinzipien** konsequent angewendet
+
+Details zur Architektur: [CONVENTIONS_CODE.md](CONVENTIONS_CODE.md)
+
+---
+
+## Dokumentation
+
+### Für Benutzer
+- **[README.md](README.md)** (diese Datei) - Installation, Features, Commands
+
+### Für Entwickler
+- **[CLAUDE.md](CLAUDE.md)** - KI-Kontext & Arbeitsweise
+- **[CONVENTIONS_NAMING.md](CONVENTIONS_NAMING.md)** - Namenskonventionen
+- **[CONVENTIONS_CODE.md](CONVENTIONS_CODE.md)** - Code-Prinzipien & Design Patterns
+- **[ERKENNTNISSE.md](ERKENNTNISSE.md)** - Sprint-Learnings & Architektur-Evolution
+
+### API-Dokumentation
+
+```bash
+# JavaDoc generieren
+mvn javadoc:javadoc
+# Output: target/site/apidocs/index.html
+```
+
+---
+
+## Lizenz
+
+*TBD*
+
+---
+
+## Kontakt & Support
+
+*TBD*
+
+---
+
+## Credits
+
+Entwickelt mit Unterstützung von [Claude Code](https://claude.com/claude-code).

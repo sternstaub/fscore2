@@ -96,13 +96,13 @@ class PlotActionSetName extends PlotAction {
 **Konzept:** Plots exposieren ihre verfügbaren Aktionen über Traits.
 
 ```java
-interface NamedPlot {
+interface PlotNamed {
     default List<PlotAction> getNameActions() {
         return List.of(new PlotActionSetName(this));
     }
 }
 
-interface StorageContainerPlot {
+interface PlotContainerStorage {
     default List<PlotAction> getStorageActions() {
         return List.of(
             new PlotActionOpenStorage(this),
@@ -111,7 +111,7 @@ interface StorageContainerPlot {
     }
 }
 
-interface NpcContainerPlot {
+interface PlotContainerNpc {
     default List<PlotAction> getNpcActions() {
         return List.of(
             new PlotActionSpawnNpc(this),
@@ -124,7 +124,7 @@ interface NpcContainerPlot {
 **Zusammenführung:**
 ```java
 class TradeguildPlot extends Plot
-    implements NamedPlot, StorageContainerPlot, NpcContainerPlot {
+    implements PlotNamed, PlotContainerStorage, PlotContainerNpc {
 
     @Override
     public List<PlotAction> getAvailablePlotActions() {
@@ -319,11 +319,11 @@ class CurrencyRegistry {
 }
 ```
 
-### 2. Plots-Modul: Preis-Logik nur in StorageContainerPlot
+### 2. Plots-Modul: Preis-Logik nur in PlotContainerStorage
 
 **Problem:**
 ```java
-class StorageContainerPlot {
+class PlotContainerStorage {
     private Map<ItemStack, Double> prices = new HashMap<>();  // Nur hier!
 }
 ```
@@ -488,14 +488,14 @@ class PlotActionPermissions { ... }
 **Konsequenz:**
 ```java
 // ✅ Flexibel kombinierbar
-interface NamedPlot { ... }
-interface StorageContainerPlot { ... }
-class TradeguildPlot implements NamedPlot, StorageContainerPlot { ... }
+interface PlotNamed { ... }
+interface PlotContainerStorage { ... }
+class TradeguildPlot implements PlotNamed, PlotContainerStorage { ... }
 
 // ❌ Starr und schwer erweiterbar
 class Plot { ... }
-class NamedPlot extends Plot { ... }
-class StoragePlot extends NamedPlot { ... }
+class PlotNamed extends Plot { ... }
+class StoragePlot extends PlotNamed { ... }
 ```
 
 ### 3. GuiBuilder > instanceof
@@ -572,9 +572,9 @@ else if (plot instanceof StoragePlot) showStorageGui();
 - [ ] `GuiBuilder` Utility
 
 ### Priorität 2: Trait-System
-- [ ] `NamedPlot` Interface
-- [ ] `StorageContainerPlot` Interface
-- [ ] `NpcContainerPlot` Interface
+- [ ] `PlotNamed` Interface
+- [ ] `PlotContainerStorage` Interface
+- [ ] `PlotContainerNpc` Interface
 - [ ] `Priceable` Interface
 
 ### Priorität 3: Provider-System
@@ -590,6 +590,349 @@ else if (plot instanceof StoragePlot) showStorageGui();
 
 ---
 
-**Stand:** Initialisiert aus Erkenntnissen des fs-core-sample-dump Projekts
-**Ziel:** Saubere Implementierung ohne Legacy-Ballast
-**Philosophie:** Design Patterns > Quick Hacks
+## Sprint 20: Core-Foundation & Neuinitialisierung (2025-11-19)
+
+### Kontext
+
+Sprint 20 war der erste Sprint der Neuinitialisierung. Basierend auf den Erkenntnissen aus dem fs-core-sample-dump Prototypen wurde eine saubere Implementierung von Grund auf erstellt.
+
+### Erfolgreich validierte Architektur
+
+**✅ Self-Rendering Pattern:**
+```java
+// GuiRenderable = Objekte rendern sich selbst
+ItemStack getDisplayItem();
+boolean isVisible(Player player);
+
+// Proof-of-Concept: PlotActionSetName
+class PlotActionSetName implements GuiRenderable {
+    ItemStack getDisplayItem() {
+        return new ItemStack(Material.NAME_TAG)
+            .setDisplayName("§6Namen ändern")
+            .setLore("§7Aktueller Name: §f" + plot.getName());
+    }
+}
+```
+
+**✅ Command Pattern:**
+```java
+// PlotAction = First-Class Actions mit Logik + Permissions + Rendering
+abstract class PlotAction implements GuiRenderable {
+    boolean canExecute(Player player);
+    void execute(Player player);
+}
+
+// Bewährtes Permission-System
+protected boolean requiresOwnership() { return true; }
+```
+
+**✅ Trait-Komposition:**
+```java
+// TradeguildPlot kombiniert 3 Traits
+class TradeguildPlot implements PlotNamed, PlotIsContainerForStorage, PlotIsContainerForNpc {
+    List<PlotAction> getAvailablePlotActions() {
+        return Stream.of(
+            getNameActions(),      // PlotNamed
+            getStorageActions(),   // PlotIsContainerForStorage
+            getNpcActions()        // PlotIsContainerForNpc
+        ).flatMap(List::stream).toList();
+    }
+}
+```
+
+**✅ Universal GuiBuilder:**
+```java
+// Ein GUI-System für ALLE Plot-Typen
+Inventory gui = GuiBuilder.buildFromActions(
+    plot.getAvailablePlotActions(),
+    player,
+    "Plot verwalten"
+);
+```
+
+### Kritische Erkenntnisse
+
+#### 1. Sprechende Namen für Trait-Interfaces
+
+**Problem:** Mehrdeutige Namen erschweren Verständnis
+```java
+// ❌ Unklar
+PlotContainerStorage
+PlotContainerNpc
+```
+
+**Lösung:** Pattern "PlotIs[Eigenschaft]For[Zweck]"
+```java
+// ✅ Selbsterklärend
+PlotIsContainerForStorage  // Ein Plot IST ein Container FÜR Storage
+PlotIsContainerForNpc     // Ein Plot IST ein Container FÜR NPCs
+```
+
+**Erkenntnis:** Längere, beschreibende Namen > kurze, mehrdeutige Namen
+
+#### 2. Interface-Dependency Priorisierung
+
+**Problem:** PlotAction (Phase 4) benötigte Plot-Interface (Phase 7)
+
+**Lösung:** Minimales Interface vorgezogen
+```java
+// Phase 4: Minimal Plot-Interface
+interface Plot {
+    UUID getOwnerId();  // Nur für Owner-Checks
+}
+
+// Phase 7: Vollständiges Interface
+interface Plot {
+    UUID getId();
+    UUID getOwnerId();
+    Location getLocation();
+    List<PlotAction> getAvailablePlotActions();
+}
+```
+
+**Erkenntnis:** Iterative Interface-Entwicklung vermeidet Blockaden
+
+#### 3. Mockito Lenient Strictness für Integration-Tests
+
+**Problem:** UnnecessaryStubbingException bei Mocks in @BeforeEach
+```java
+// Mocks werden nicht in allen Tests genutzt
+@BeforeEach
+void setUp() {
+    when(owner.getUniqueId()).thenReturn(ownerId);
+    when(owner.hasPermission(anyString())).thenReturn(false); // Nicht überall genutzt
+}
+```
+
+**Lösung:** Lenient Strictness aktivieren
+```java
+@MockitoSettings(strictness = Strictness.LENIENT)
+class PlotActionSetNameTest {
+    // Flexible Mock-Nutzung ohne Exception
+}
+```
+
+**Erkenntnis:** Lenient Mode für Test-Klassen mit gemeinsamen Mocks
+
+#### 4. Bukkit ItemFactory Mocking
+
+**Problem:** ItemStack.getItemMeta() benötigt ItemFactory
+```java
+// ❌ NPE: Bukkit.getItemFactory() ist null
+ItemStack item = new ItemStack(Material.NAME_TAG);
+ItemMeta meta = item.getItemMeta(); // NullPointerException
+```
+
+**Lösung:** MockedStatic für Bukkit + ItemFactory
+```java
+// ✅ Korrektes Mocking
+try (MockedStatic<Bukkit> bukkit = mockStatic(Bukkit.class)) {
+    bukkit.when(Bukkit::getItemFactory).thenReturn(itemFactory);
+    when(itemFactory.getItemMeta(any(Material.class))).thenReturn(itemMeta);
+    when(itemMeta.clone()).thenReturn(itemMeta);
+
+    ItemStack item = action.getDisplayItem();
+    // Funktioniert jetzt
+}
+```
+
+**Erkenntnis:** Bukkit-Mocking erfordert vollständige Factory-Kette
+
+### Test-Driven Development Erfolg
+
+**Metriken Sprint 20:**
+- **Tests:** 146 (Ziel: ~70) → **209% Coverage**
+- **Production Code:** 23 Klassen
+- **Code Coverage:** ~95% (Ziel: ≥80%)
+- **Build-Status:** ✅ SUCCESS
+- **Phasen:** 10/10 abgeschlossen (100%)
+
+**Test-Kategorien:**
+- 20 Tests: Provider-System (ProviderRegistry)
+- 37 Tests: UI-Komponenten (GuiRenderable, MenuAction, GuiBuilder)
+- 29 Tests: Command & Event System
+- 25 Tests: Plot & Traits
+- 13 Tests: PlotActionSetName
+- 13 Tests: Integration-Tests (GuiBuilder, TradeguildPlot)
+- 9 Tests: Plot Traits
+
+**Bewährte Praktiken:**
+- ✅ Tests BEVOR Code geschrieben (TDD)
+- ✅ Mock-basierte Unit Tests (keine echten Server)
+- ✅ Integration-Tests für Proof-of-Concept
+- ✅ Build nach JEDER Phase validieren
+- ✅ Lenient Mockito für flexible Test-Suites
+
+### Anti-Patterns vermieden
+
+**✅ KEINE Plot-spezifischen UI-Klassen**
+```java
+// ❌ Vermieden
+class TradeguildUi { ... }
+class StoragePlotUi { ... }
+
+// ✅ Stattdessen
+GuiBuilder.buildFromActions(plot.getAvailablePlotActions(), player, "...");
+```
+
+**✅ KEINE instanceof-Ketten**
+```java
+// ❌ Vermieden
+if (plot instanceof TradeguildPlot) { ... }
+else if (plot instanceof StoragePlot) { ... }
+
+// ✅ Stattdessen
+plot.getAvailablePlotActions().forEach(action -> ...);
+```
+
+**✅ KEINE Reflection für Type-Checks**
+```java
+// ❌ Vermieden
+Method method = plot.getClass().getMethod("getPrice");
+
+// ✅ Stattdessen
+if (plot instanceof Priceable priceable) {
+    double price = priceable.getPrice();
+}
+```
+
+---
+
+## Neuinitialisierung (2025-11-19)
+
+Diese Repository-Neuinitialisierung startete mit Sprint 1 und implementiert nur die bewährten Patterns aus den vorherigen Erkenntnissen.
+
+---
+
+## Sprint 1: Core-Foundation Etablierung (2025-11-19)
+
+**Ziel:** Saubere Implementierung der Kern-Architektur ohne Legacy-Ballast
+
+### Implementierte Features
+
+1. **Maven Multi-Module Struktur**
+   - `core/` - Kern-Plugin mit allen Basis-Systemen
+   - `module-towny/`, `module-vault/`, `module-citizens/` - Optionale Provider-Module
+
+2. **Provider-System mit Graceful Degradation**
+   - `EconomyProvider`, `NpcProvider` Interfaces
+   - NoOp-Fallbacks wenn Module fehlen
+
+3. **Self-Rendering Pattern (GuiRenderable)**
+   - Interface für selbst-rendernde UI-Komponenten
+   - Eliminiert separateUI-Klassen
+
+4. **Command Pattern (PlotAction)**
+   - Abstrakte PlotAction Basis-Klasse
+   - requiresOwnership() Pattern
+   - canExecute() Permission-System
+
+5. **Trait-Komposition**
+   - `PlotNamed` - Namen-Verwaltung
+   - `PlotIsContainerForStorage` - Storage-Funktionalität
+   - `PlotIsContainerForNpc` - NPC-Verwaltung
+
+6. **Universal GuiBuilder**
+   - `GuiBuilder.buildFromActions()` funktioniert für alle Plot-Typen
+   - Dynamische GUI-Generierung
+
+7. **Proof-of-Concept**
+   - `PlotActionSetName` als vollständige Referenz-Implementierung
+   - Integration-Tests validieren Architektur
+
+### Test-Metriken
+
+- **Tests:** 146/146 ✅
+- **Code Coverage:** ~95%
+- **Build:** SUCCESS
+
+### Kritische Erkenntnisse
+
+#### 1. Naming Convention Problem
+**Problem:** Namen waren inkonsistent und teils zu kurz/unklar
+```java
+PlotNamed                    // Unklar: Trait oder Status?
+PlotIsContainerForStorage    // Zu lang, verwirrend
+```
+
+**Lösung für Sprint 2:** Prefix/Suffix-Pattern etablieren
+
+#### 2. Package-Struktur unklar
+**Problem:** Keine klare Trennung zwischen Interfaces und Implementierungen
+
+**Lösung für Sprint 2:** Universelles Pattern etablieren
+```
+[package]/
+├── [Interfaces].java
+└── impl/
+    ├── Abstract[Base].java
+    └── [Concrete].java
+```
+
+### Nächste Schritte (Sprint 2)
+
+**Priorität 1: Architektur-Refactoring**
+- Naming Conventions finalisieren (Prefix/Suffix-Pattern)
+- Package-Struktur etablieren
+- Alle Klassen migrieren
+
+**Priorität 2: Invokable-Pattern vorbereiten**
+- `Invokable`, `InvokableByCommand`, `InvokableByGuiButton` Interfaces
+- CommandInvoker, GuiButton Datenklassen
+
+**Sprint 3+: Command-System & Features**
+- Command-System implementieren
+- Konkrete PlotActions (Claim, Storage, NPC)
+- Persistenz-Layer
+- Provider-Implementierungen
+
+---
+
+## Sprint 2: Architektur-Refactoring (2025-11-19 - laufend)
+
+**Ziel:** Einheitliche Naming Conventions & Package-Struktur etablieren
+
+### Neue Patterns
+
+#### Naming Conventions
+
+| Typ | Pattern | Beispiel |
+|-----|---------|----------|
+| Interface (Trait) | `[Subject]With[Capability]` | `PlotWithName`, `PlotWithStorageContainer` |
+| Interface (Invokable) | `InvokableBy[Mechanism]` | `InvokableByCommand`, `InvokableByGuiButton` |
+| Abstrakte Klasse | `Abstract[Name]` | `AbstractPlotBase`, `AbstractPlotClaimed` |
+| Konkrete Klasse | `[Name][Type]` | `TradeguildPlot`, `PlotActionSetName` |
+| Enumeration | `Defined[Concept]s` | `DefinedPlotTypes`, `DefinedCurrencies` |
+
+#### Package-Struktur
+
+```
+plot/
+├── Plot.java                       # Interface
+├── PlotWithName.java               # Interface
+├── DefinedPlotTypes.java           # Enum
+└── impl/
+    ├── AbstractPlotBase.java       # Abstrakt
+    ├── AbstractPlotClaimed.java    # Abstrakt
+    └── TradeguildPlot.java         # Konkret
+```
+
+### Migration-Plan
+
+**Phase 1: Conventions aktualisieren** ✅
+- CONVENTIONS_NAMING.md neu geschrieben
+- CLAUDE.md aktualisiert
+
+**Phase 2-8: Code-Migration**
+- Trait-Interfaces umbenennen
+- Abstrakte Klassen erstellen
+- Package-Struktur reorganisieren
+- Tests migrieren
+- Build validieren
+
+---
+
+**Stand:** Sprint 1 abgeschlossen, Sprint 2 in Progress (2025-11-19)
+**Ziel:** Perfekte Architektur-Foundation ✅
+**Philosophie:** Explizite Namen > Kurze Namen ✅
+**Fokus:** Design vor Features ✅

@@ -61,9 +61,9 @@ core/src/main/java/de/fallenstar/core/
 │   ├── PlotType.java            # Enum für Plot-Typen
 │   │
 │   ├── trait/                   # Trait-Interfaces (Komposition)
-│   │   ├── NamedPlot.java
-│   │   ├── StorageContainerPlot.java
-│   │   ├── NpcContainerPlot.java
+│   │   ├── PlotNamed.java
+│   │   ├── PlotContainerStorage.java
+│   │   ├── PlotContainerNpc.java
 │   │   └── Priceable.java
 │   │
 │   ├── action/                  # PlotAction-System
