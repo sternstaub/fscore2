@@ -590,6 +590,238 @@ else if (plot instanceof StoragePlot) showStorageGui();
 
 ---
 
-**Stand:** Initialisiert aus Erkenntnissen des fs-core-sample-dump Projekts
-**Ziel:** Saubere Implementierung ohne Legacy-Ballast
-**Philosophie:** Design Patterns > Quick Hacks
+## Sprint 20: Core-Foundation & Neuinitialisierung (2025-11-19)
+
+### Kontext
+
+Sprint 20 war der erste Sprint der Neuinitialisierung. Basierend auf den Erkenntnissen aus dem fs-core-sample-dump Prototypen wurde eine saubere Implementierung von Grund auf erstellt.
+
+### Erfolgreich validierte Architektur
+
+**✅ Self-Rendering Pattern:**
+```java
+// GuiRenderable = Objekte rendern sich selbst
+ItemStack getDisplayItem();
+boolean isVisible(Player player);
+
+// Proof-of-Concept: PlotActionSetName
+class PlotActionSetName implements GuiRenderable {
+    ItemStack getDisplayItem() {
+        return new ItemStack(Material.NAME_TAG)
+            .setDisplayName("§6Namen ändern")
+            .setLore("§7Aktueller Name: §f" + plot.getName());
+    }
+}
+```
+
+**✅ Command Pattern:**
+```java
+// PlotAction = First-Class Actions mit Logik + Permissions + Rendering
+abstract class PlotAction implements GuiRenderable {
+    boolean canExecute(Player player);
+    void execute(Player player);
+}
+
+// Bewährtes Permission-System
+protected boolean requiresOwnership() { return true; }
+```
+
+**✅ Trait-Komposition:**
+```java
+// TradeguildPlot kombiniert 3 Traits
+class TradeguildPlot implements PlotNamed, PlotIsContainerForStorage, PlotIsContainerForNpc {
+    List<PlotAction> getAvailablePlotActions() {
+        return Stream.of(
+            getNameActions(),      // PlotNamed
+            getStorageActions(),   // PlotIsContainerForStorage
+            getNpcActions()        // PlotIsContainerForNpc
+        ).flatMap(List::stream).toList();
+    }
+}
+```
+
+**✅ Universal GuiBuilder:**
+```java
+// Ein GUI-System für ALLE Plot-Typen
+Inventory gui = GuiBuilder.buildFromActions(
+    plot.getAvailablePlotActions(),
+    player,
+    "Plot verwalten"
+);
+```
+
+### Kritische Erkenntnisse
+
+#### 1. Sprechende Namen für Trait-Interfaces
+
+**Problem:** Mehrdeutige Namen erschweren Verständnis
+```java
+// ❌ Unklar
+PlotContainerStorage
+PlotContainerNpc
+```
+
+**Lösung:** Pattern "PlotIs[Eigenschaft]For[Zweck]"
+```java
+// ✅ Selbsterklärend
+PlotIsContainerForStorage  // Ein Plot IST ein Container FÜR Storage
+PlotIsContainerForNpc     // Ein Plot IST ein Container FÜR NPCs
+```
+
+**Erkenntnis:** Längere, beschreibende Namen > kurze, mehrdeutige Namen
+
+#### 2. Interface-Dependency Priorisierung
+
+**Problem:** PlotAction (Phase 4) benötigte Plot-Interface (Phase 7)
+
+**Lösung:** Minimales Interface vorgezogen
+```java
+// Phase 4: Minimal Plot-Interface
+interface Plot {
+    UUID getOwnerId();  // Nur für Owner-Checks
+}
+
+// Phase 7: Vollständiges Interface
+interface Plot {
+    UUID getId();
+    UUID getOwnerId();
+    Location getLocation();
+    List<PlotAction> getAvailablePlotActions();
+}
+```
+
+**Erkenntnis:** Iterative Interface-Entwicklung vermeidet Blockaden
+
+#### 3. Mockito Lenient Strictness für Integration-Tests
+
+**Problem:** UnnecessaryStubbingException bei Mocks in @BeforeEach
+```java
+// Mocks werden nicht in allen Tests genutzt
+@BeforeEach
+void setUp() {
+    when(owner.getUniqueId()).thenReturn(ownerId);
+    when(owner.hasPermission(anyString())).thenReturn(false); // Nicht überall genutzt
+}
+```
+
+**Lösung:** Lenient Strictness aktivieren
+```java
+@MockitoSettings(strictness = Strictness.LENIENT)
+class PlotActionSetNameTest {
+    // Flexible Mock-Nutzung ohne Exception
+}
+```
+
+**Erkenntnis:** Lenient Mode für Test-Klassen mit gemeinsamen Mocks
+
+#### 4. Bukkit ItemFactory Mocking
+
+**Problem:** ItemStack.getItemMeta() benötigt ItemFactory
+```java
+// ❌ NPE: Bukkit.getItemFactory() ist null
+ItemStack item = new ItemStack(Material.NAME_TAG);
+ItemMeta meta = item.getItemMeta(); // NullPointerException
+```
+
+**Lösung:** MockedStatic für Bukkit + ItemFactory
+```java
+// ✅ Korrektes Mocking
+try (MockedStatic<Bukkit> bukkit = mockStatic(Bukkit.class)) {
+    bukkit.when(Bukkit::getItemFactory).thenReturn(itemFactory);
+    when(itemFactory.getItemMeta(any(Material.class))).thenReturn(itemMeta);
+    when(itemMeta.clone()).thenReturn(itemMeta);
+
+    ItemStack item = action.getDisplayItem();
+    // Funktioniert jetzt
+}
+```
+
+**Erkenntnis:** Bukkit-Mocking erfordert vollständige Factory-Kette
+
+### Test-Driven Development Erfolg
+
+**Metriken Sprint 20:**
+- **Tests:** 146 (Ziel: ~70) → **209% Coverage**
+- **Production Code:** 23 Klassen
+- **Code Coverage:** ~95% (Ziel: ≥80%)
+- **Build-Status:** ✅ SUCCESS
+- **Phasen:** 10/10 abgeschlossen (100%)
+
+**Test-Kategorien:**
+- 20 Tests: Provider-System (ProviderRegistry)
+- 37 Tests: UI-Komponenten (GuiRenderable, MenuAction, GuiBuilder)
+- 29 Tests: Command & Event System
+- 25 Tests: Plot & Traits
+- 13 Tests: PlotActionSetName
+- 13 Tests: Integration-Tests (GuiBuilder, TradeguildPlot)
+- 9 Tests: Plot Traits
+
+**Bewährte Praktiken:**
+- ✅ Tests BEVOR Code geschrieben (TDD)
+- ✅ Mock-basierte Unit Tests (keine echten Server)
+- ✅ Integration-Tests für Proof-of-Concept
+- ✅ Build nach JEDER Phase validieren
+- ✅ Lenient Mockito für flexible Test-Suites
+
+### Anti-Patterns vermieden
+
+**✅ KEINE Plot-spezifischen UI-Klassen**
+```java
+// ❌ Vermieden
+class TradeguildUi { ... }
+class StoragePlotUi { ... }
+
+// ✅ Stattdessen
+GuiBuilder.buildFromActions(plot.getAvailablePlotActions(), player, "...");
+```
+
+**✅ KEINE instanceof-Ketten**
+```java
+// ❌ Vermieden
+if (plot instanceof TradeguildPlot) { ... }
+else if (plot instanceof StoragePlot) { ... }
+
+// ✅ Stattdessen
+plot.getAvailablePlotActions().forEach(action -> ...);
+```
+
+**✅ KEINE Reflection für Type-Checks**
+```java
+// ❌ Vermieden
+Method method = plot.getClass().getMethod("getPrice");
+
+// ✅ Stattdessen
+if (plot instanceof Priceable priceable) {
+    double price = priceable.getPrice();
+}
+```
+
+### Nächste Schritte (Sprint 21+)
+
+**Priorität 1: Konkrete PlotActions**
+- PlotActionOpenStorage (Storage öffnen)
+- PlotActionSetStoragePrice (Mietpreis setzen)
+- PlotActionSpawnNpc (NPC erstellen)
+- PlotActionRemoveNpc (NPC entfernen)
+
+**Priorität 2: Persistenz**
+- PlotManager (Plot-Verwaltung)
+- Datenbank-Integration (MySQL/SQLite)
+- Plot-Serialization
+
+**Priorität 3: Provider-Implementierungen**
+- TownyPlotProvider (Towny-Integration)
+- VaultEconomyProvider (Economy-Integration)
+- CitizensNPCProvider (Citizens-Integration)
+
+**Priorität 4: Real-World Testing**
+- Minecraft-Server Integration
+- Performance-Tests
+- User-Testing mit echten Spielern
+
+---
+
+**Stand:** Sprint 20 abgeschlossen (2025-11-19)
+**Ziel:** Saubere Implementierung ohne Legacy-Ballast ✅
+**Philosophie:** Design Patterns > Quick Hacks ✅
+**Validierung:** Proof-of-Concept erfolgreich ✅

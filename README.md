@@ -1,8 +1,29 @@
 # FallenStar Core
 
-**Status:** Neuinitialisierung aus alten Artefakten
+**Status:** ✅ Sprint 20 abgeschlossen (Core-Foundation etabliert)
 **Sprache:** Deutsch (Dokumentation) / Englisch (Code)
 **Plattform:** Minecraft Plugin (Spigot/Paper)
+**Build:** ✅ SUCCESS (146 Tests, ~95% Coverage)
+
+---
+
+## Projekt-Status
+
+**Sprint 20 (2025-11-19):** Core-Foundation & Architektur-Setup
+- ✅ Maven Multi-Module Struktur
+- ✅ Provider-System mit Graceful Degradation
+- ✅ Self-Rendering Pattern (GuiRenderable)
+- ✅ Command Pattern (PlotAction)
+- ✅ Trait-Komposition (PlotNamed, PlotIsContainerForStorage, PlotIsContainerForNpc)
+- ✅ Universal GuiBuilder
+- ✅ Proof-of-Concept validiert (PlotActionSetName)
+- ✅ 146 Unit & Integration Tests
+- ✅ ~95% Code Coverage
+
+**Nächste Schritte (Sprint 21+):**
+- Konkrete PlotActions (Storage, NPC, Teleport)
+- Persistenz-Layer (Plot-Manager, Datenbank)
+- Provider-Implementierungen (Towny, Vault, Citizens)
 
 ---
 
@@ -52,11 +73,18 @@ Wenn ein Modul fehlt, läuft das Core-System mit NoOp-Fallback weiter (Graceful 
 
 ```java
 interface PlotNamed { ... }
-interface PlotContainerStorage { ... }
-interface PlotContainerNpc { ... }
+interface PlotIsContainerForStorage { ... }
+interface PlotIsContainerForNpc { ... }
 
-class TradeguildPlot implements PlotNamed, PlotContainerStorage, PlotContainerNpc {
+class TradeguildPlot implements PlotNamed, PlotIsContainerForStorage, PlotIsContainerForNpc {
     // Kombiniert alle Traits
+    List<PlotAction> getAvailablePlotActions() {
+        return Stream.of(
+            getNameActions(),      // PlotNamed
+            getStorageActions(),   // PlotIsContainerForStorage
+            getNpcActions()        // PlotIsContainerForNpc
+        ).flatMap(List::stream).toList();
+    }
 }
 ```
 

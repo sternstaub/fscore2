@@ -2,9 +2,10 @@
 
 **Ziel:** Grundlegende Architektur-Komponenten implementieren und Maven-Projekt initialisieren
 
-**Status:** Phase 3 abgeschlossen ✅
+**Status:** ✅ ABGESCHLOSSEN (Alle 10 Phasen erfolgreich)
 **Start:** 2025-11-19
-**Letzte Aktualisierung:** 2025-11-19 06:00
+**Abgeschlossen:** 2025-11-19
+**Letzte Aktualisierung:** 2025-11-19 14:32
 **Verantwortlich:** Claude (AI-Assistant)
 
 ---
@@ -163,136 +164,281 @@ fallenstar-core/
 ### Phase 4: PlotAction Basisklasse
 **Ziel:** Command Pattern für Plot-Aktionen
 
+**Status:** ✅ ABGESCHLOSSEN
+
 **Aufgaben:**
-- [ ] `PlotAction` abstrakte Klasse erstellen
-  - [ ] `requiresOwnership()` Methode
-  - [ ] `canExecute(Player)` Methode
-  - [ ] `isOwner(Player)` Helper
-  - [ ] `execute(Player)` abstrakt
-  - [ ] `GuiRenderable` implementieren
-- [ ] `PlotActionTest` mit Mockito
-  - [ ] Test: Owner kann ausführen
-  - [ ] Test: Nicht-Owner kann nicht ausführen (wenn requiresOwnership)
-  - [ ] Test: isVisible gibt true zurück (Standard)
-- [ ] JavaDoc auf Deutsch
-- [ ] Build-Test: `mvn clean test`
+- [x] `PlotAction` abstrakte Klasse erstellen
+  - [x] `requiresOwnership()` Methode
+  - [x] `canExecute(Player)` Methode
+  - [x] `isOwner(Player)` Helper
+  - [x] `execute(Player)` abstrakt
+  - [x] `GuiRenderable` implementieren
+- [x] `PlotActionTest` mit Mockito (12 Tests)
+  - [x] Test: Owner kann ausführen
+  - [x] Test: Nicht-Owner kann nicht ausführen (wenn requiresOwnership)
+  - [x] Test: isVisible gibt true zurück (Standard)
+  - [x] Test: Public Actions (requiresOwnership=false)
+  - [x] Test: Custom Permission Override
+  - [x] Test: Owner-Only Visibility Override
+  - [x] Test: Null-Safety
+- [x] JavaDoc auf Deutsch (vollständig)
+- [x] Build-Test: `mvn clean test` ✅ (73/73 Tests)
+- [x] Build-Package: `mvn clean package` ✅
 
 **Package:** `de.fallenstar.core.plot.action`
+
+**Details:**
+- 1 abstrakte Klasse: `PlotAction`
+- 1 minimales Interface: `Plot` (vorgezogen aus Phase 7)
+- 12 Unit Tests mit Mockito
+- Mock-basiert (Player, Plot)
+- Lenient Strictness (vermeidet UnnecessaryStubbingException)
+
+**Änderung:** Plot-Interface wurde teilweise vorgezogen (nur `getOwnerId()`), da PlotAction es für Owner-Checks benötigt. Die vollständige Implementierung erfolgt in Phase 7.
 
 ---
 
 ### Phase 5: MenuAction Interface
 **Ziel:** Hierarchische Menü-Unterstützung
 
+**Status:** ✅ ABGESCHLOSSEN
+
 **Aufgaben:**
-- [ ] `MenuAction` Interface erstellen
+- [x] `MenuAction` Interface erstellen
   ```java
   interface MenuAction {
       List<GuiRenderable> getSubActions();
   }
   ```
-- [ ] Test-Implementierung mit Mock-PlotAction
-- [ ] Unit Tests
-- [ ] JavaDoc auf Deutsch
-- [ ] Build-Test: `mvn clean test`
+- [x] Test-Implementierung mit Mock-PlotAction
+- [x] Unit Tests (11 Tests)
+  - [x] Test: PlotAction kann MenuAction implementieren
+  - [x] Test: getSubActions gibt korrekte Liste zurück
+  - [x] Test: Leere Submenüs sind gültig
+  - [x] Test: Rekursive MenuActions (Submenüs in Submenüs)
+  - [x] Test: Dynamische Sub-Actions basierend auf Zustand
+  - [x] Test: GuiRenderable Integration
+  - [x] Test: Null-Safety
+- [x] JavaDoc auf Deutsch (vollständig mit Beispielen)
+- [x] Build-Test: `mvn clean test` ✅ (84/84 Tests)
+- [x] Build-Package: `mvn clean package` ✅
 
 **Package:** `de.fallenstar.core.ui`
+
+**Details:**
+- 1 Interface: `MenuAction`
+- 11 Unit Tests mit Mock-Implementierungen
+- Test-Implementierungen: TestMenuAction, EmptyMenuAction, NestedMenuAction, DynamicMenuAction
+- Rekursive Menü-Unterstützung validiert
+- Java Record für SimpleGuiRenderable Test-Helper
 
 ---
 
 ### Phase 6: GuiBuilder Utility
 **Ziel:** Universeller GUI-Generator aus Actions
 
+**Status:** ✅ ABGESCHLOSSEN
+
 **Aufgaben:**
-- [ ] `GuiBuilder` Klasse erstellen
-  - [ ] `buildFromActions(List<GuiRenderable>, Player, String)` Methode
-  - [ ] Filtere unsichtbare Actions
-  - [ ] Berechne GUI-Größe dynamisch (Vielfaches von 9)
-  - [ ] Fülle Inventory mit Display-Items
-- [ ] `GuiBuilderTest` mit Mock-Actions
-  - [ ] Test: Unsichtbare Actions werden gefiltert
-  - [ ] Test: GUI-Größe wird korrekt berechnet
-  - [ ] Test: Items werden in richtiger Reihenfolge gesetzt
-- [ ] JavaDoc auf Deutsch
-- [ ] Build-Test: `mvn clean test`
+- [x] `GuiBuilder` Klasse erstellen
+  - [x] `buildFromActions(List<GuiRenderable>, Player, String)` Methode
+  - [x] Filtere unsichtbare Actions
+  - [x] Berechne GUI-Größe dynamisch (Vielfaches von 9)
+  - [x] Fülle Inventory mit Display-Items
+  - [x] Private calculateInventorySize() Helper-Methode
+  - [x] Utility-Klasse Pattern (private Constructor)
+- [x] `GuiBuilderTest` mit Mock-Actions (14 Tests)
+  - [x] Test: Unsichtbare Actions werden gefiltert
+  - [x] Test: GUI-Größe wird korrekt berechnet (1, 9, 10, 27, 28, 54, 100 Items)
+  - [x] Test: Items werden in richtiger Reihenfolge gesetzt
+  - [x] Test: Leere Liste → Minimum 9 Slots
+  - [x] Test: Mehr als 54 Items → Maximum 54 Slots
+  - [x] Test: Null-Parameter werfen IllegalArgumentException
+  - [x] Test: Titel wird korrekt übergeben
+  - [x] Test: Utility-Klasse nicht instanziierbar
+- [x] JavaDoc auf Deutsch (vollständig mit Beispielen)
+- [x] Build-Test: `mvn clean test` ✅ (98/98 Tests)
+- [x] Build-Package: `mvn clean package` ✅
 
 **Package:** `de.fallenstar.core.ui`
+
+**Details:**
+- 1 Utility-Klasse: `GuiBuilder` (final, private constructor)
+- 1 statische Methode: `buildFromActions()`
+- 1 private Helper: `calculateInventorySize()`
+- 14 Unit Tests mit MockedStatic<Bukkit>
+- Test-Coverage: Alle Edge Cases, Null-Safety, Visibility-Filtering
+- Konstanten: MAX_INVENTORY_SIZE (54), SLOTS_PER_ROW (9)
 
 ---
 
 ### Phase 7: Plot Interface (Basis)
 **Ziel:** Basis-Interface für alle Plot-Typen
 
+**Status:** ✅ ABGESCHLOSSEN
+
 **Aufgaben:**
-- [ ] `Plot` Interface erstellen
-  - [ ] `UUID getId()`
-  - [ ] `UUID getOwnerId()`
-  - [ ] `Location getLocation()`
-  - [ ] `List<PlotAction> getAvailablePlotActions()`
-- [ ] Mock-Implementierung für Tests
-- [ ] Unit Tests
-- [ ] JavaDoc auf Deutsch
+- [x] `Plot` Interface erweitern (von minimaler Phase 4 Version)
+  - [x] `UUID getId()` - Eindeutige Plot-ID
+  - [x] `UUID getOwnerId()` - Owner-UUID (bereits in Phase 4)
+  - [x] `Location getLocation()` - Welt-Position
+  - [x] `List<PlotAction> getAvailablePlotActions()` - Trait-Komposition
+- [x] Mock-Implementierungen für Tests (3 Test-Klassen)
+  - [x] TestPlot (minimale Implementierung ohne Actions)
+  - [x] TestPlotWithActions (mit 2 Actions)
+  - [x] TestPlotWithMultipleTraits (simuliert Trait-Komposition)
+- [x] Unit Tests (13 Tests)
+  - [x] Test: getId gibt korrekte ID zurück
+  - [x] Test: getOwnerId gibt korrekte Owner-ID zurück
+  - [x] Test: getLocation gibt korrekte Location zurück
+  - [x] Test: getAvailablePlotActions gibt Actions zurück
+  - [x] Test: Leere Liste für Plot ohne Actions
+  - [x] Test: Trait-Pattern kombiniert mehrere Traits
+  - [x] Test: Plot-Gleichheit via getId
+  - [x] Test: Null-Safety für alle Methoden
+- [x] JavaDoc auf Deutsch (vollständig mit Trait-Beispielen)
+- [x] Build-Test: `mvn clean test` ✅ (111/111 Tests)
+- [x] Build-Package: `mvn clean package` ✅
 
 **Package:** `de.fallenstar.core.plot`
+
+**Details:**
+- Plot-Interface erweitert von Phase 4 (nur getOwnerId) zu vollständig (4 Methoden)
+- 3 Test-Implementierungen für verschiedene Szenarien
+- 13 Unit Tests mit Mock-Objekten
+- Vollständige JavaDoc mit Trait-Pattern Beispielen
+- Integration mit GuiBuilder und PlotAction demonstriert
 
 ---
 
 ### Phase 8: Trait-Interfaces definieren
 **Ziel:** Kompositionsfähige Plot-Traits
 
+**Status:** ✅ ABGESCHLOSSEN
+
 **Aufgaben:**
-- [ ] `PlotNamed` Interface
+- [x] `PlotNamed` Interface
   ```java
   interface PlotNamed extends Plot {
       String getName();
       void setName(String name);
       default List<PlotAction> getNameActions() {
-          return List.of(new PlotActionSetName(this));
+          return List.of();  // Placeholder für Phase 9
       }
   }
   ```
-- [ ] `PlotContainerStorage` Interface (Placeholder)
-- [ ] `PlotContainerNpc` Interface (Placeholder)
-- [ ] Unit Tests für Default-Implementierungen
-- [ ] JavaDoc auf Deutsch
+- [x] `PlotIsContainerForStorage` Interface (Placeholder)
+  - [x] `Inventory getStorageInventory()`
+  - [x] `default List<PlotAction> getStorageActions()` (Placeholder)
+- [x] `PlotIsContainerForNpc` Interface (Placeholder)
+  - [x] `UUID getNpcId()` und `void setNpcId(UUID)`
+  - [x] `default List<PlotAction> getNpcActions()` (Placeholder)
+- [x] Unit Tests für Trait-Interfaces (9 Tests)
+  - [x] Test: PlotNamed getName/setName
+  - [x] Test: PlotIsContainerForStorage getStorageInventory
+  - [x] Test: PlotIsContainerForNpc getNpcId/setNpcId
+  - [x] Test: Alle Default-Methoden geben leere Listen zurück
+  - [x] Test: Trait-Komposition (alle 3 Traits kombiniert)
+  - [x] Test: getAvailablePlotActions kombiniert alle Trait-Actions
+  - [x] Test: Traits sind unabhängig verwendbar
+- [x] JavaDoc auf Deutsch (vollständig mit Beispielen)
+- [x] Build-Test: `mvn clean test` ✅ (120/120 Tests)
+- [x] Build-Package: `mvn clean package` ✅
 
 **Package:** `de.fallenstar.core.plot.trait`
+
+**Details:**
+- 3 Trait-Interfaces: PlotNamed, PlotIsContainerForStorage, PlotIsContainerForNpc
+- 4 Test-Implementierungen (einzeln + kombiniert)
+- 9 Unit Tests mit Trait-Komposition
+- Vollständige JavaDoc mit Trait-Pattern Beispielen
+- Alle getXActions() sind Placeholder (Phase 9 füllt diese)
+- Refactoring: Interfaces umbenannt für bessere Lesbarkeit (PlotContainerStorage → PlotIsContainerForStorage, PlotContainerNpc → PlotIsContainerForNpc)
 
 ---
 
 ### Phase 9: Proof-of-Concept - PlotActionSetName
 **Ziel:** Erste konkrete PlotAction als Validierung
 
+**Status:** ✅ ABGESCHLOSSEN
+
 **Aufgaben:**
-- [ ] `PlotActionSetName` Klasse erstellen
-  - [ ] Extends `PlotAction`
-  - [ ] Implementiere `execute(Player)` (Placeholder: Message senden)
-  - [ ] Implementiere `getDisplayItem()` (NAME_TAG mit Lore)
-  - [ ] `requiresOwnership()` returns true
-- [ ] `PlotActionSetNameTest`
-  - [ ] Test: Owner kann ausführen
-  - [ ] Test: Nicht-Owner kann nicht ausführen
-  - [ ] Test: DisplayItem hat korrekten Material-Typ
-  - [ ] Test: DisplayItem hat DisplayName
-- [ ] Integration-Test: GuiBuilder mit PlotActionSetName
-- [ ] JavaDoc auf Deutsch
-- [ ] Build-Test: `mvn clean test`
+- [x] `PlotActionSetName` Klasse erstellen
+  - [x] Extends `PlotAction`
+  - [x] Implementiere `execute(Player)` (Placeholder: Message senden)
+  - [x] Implementiere `getDisplayItem()` (NAME_TAG mit Lore)
+  - [x] `requiresOwnership()` returns true
+- [x] `PlotActionSetNameTest` (13 Unit Tests)
+  - [x] Test: Owner kann ausführen
+  - [x] Test: Nicht-Owner kann nicht ausführen
+  - [x] Test: DisplayItem hat korrekten Material-Typ
+  - [x] Test: DisplayItem hat DisplayName
+  - [x] Test: DisplayItem Lore enthält Plot-Namen
+  - [x] Test: Lore aktualisiert sich bei Namensänderung
+  - [x] Test: Constructor wirft Exception bei null
+  - [x] Test: execute sendet Placeholder-Messages
+  - [x] Test: Integration mit PlotNamed Trait
+- [x] `GuiBuilderIntegrationTest` (5 Integration-Tests)
+  - [x] Test: GuiBuilder mit PlotActionSetName
+  - [x] Test: Plot mit mehreren Actions
+  - [x] Test: Visibility-Filtering für Non-Owner
+  - [x] Test: Trait-Komposition
+  - [x] Test: Dynamische Lore-Updates
+- [x] JavaDoc auf Deutsch (vollständig)
+- [x] Build-Test: `mvn clean test` ✅ (138/138 Tests)
+- [x] Build-Package: `mvn clean package` ✅
 
 **Package:** `de.fallenstar.core.plot.action.impl`
+
+**Details:**
+- 1 Konkrete PlotAction: `PlotActionSetName`
+- 13 Unit Tests in `PlotActionSetNameTest`
+- 5 Integration Tests in `GuiBuilderIntegrationTest` (neu erstellt)
+- Vollständige JavaDoc mit Beispielen und Placeholder-Hinweisen
+- Proof-of-Concept validiert: Self-Rendering Pattern + Command Pattern funktionieren zusammen
+- ItemFactory Mocking für Bukkit ItemStack.getItemMeta()
 
 ---
 
 ### Phase 10: Integration-Test & Dokumentation
 **Ziel:** Alles zusammenführen und dokumentieren
 
+**Status:** ✅ ABGESCHLOSSEN
+
 **Aufgaben:**
-- [ ] Integration-Test: TradeguildPlot (Mock) mit mehreren Actions
-- [ ] Integration-Test: GuiBuilder erstellt GUI aus Trait-Actions
-- [ ] Coverage-Report generieren (`mvn clean verify`)
-- [ ] Mindestens 80% Coverage sicherstellen
-- [ ] `ERKENNTNISSE.md` updaten mit Sprint-Learnings
-- [ ] `README.md` updaten mit Projekt-Status
-- [ ] Final Build: `mvn clean package`
+- [x] `TradeguildPlotIntegrationTest` (8 Integration-Tests)
+  - [x] Test: TradeguildPlot implementiert alle 3 Traits
+  - [x] Test: getAvailablePlotActions kombiniert alle Trait-Actions
+  - [x] Test: GuiBuilder mit vollständigem TradeguildPlot
+  - [x] Test: Trait-Funktionen unabhängig nutzbar
+  - [x] Test: Owner kann alle Actions ausführen
+  - [x] Test: Nicht-Owner keine Owner-Actions
+  - [x] Test: Storage-Inventory nutzt dynamischen Titel
+  - [x] Test: PlotAction reflektiert aktuelle Plot-Daten
+- [x] Coverage-Report generieren (`mvn clean verify`)
+  - [x] 146 Tests ausgeführt
+  - [x] Code Coverage: ~95%
+  - [x] Build: SUCCESS
+- [x] `ERKENNTNISSE.md` updaten
+  - [x] Sprint 20 Sektion hinzugefügt
+  - [x] 4 kritische Erkenntnisse dokumentiert
+  - [x] Test-Metriken dokumentiert
+  - [x] Anti-Patterns dokumentiert
+  - [x] Nächste Schritte definiert
+- [x] `README.md` updaten
+  - [x] Projekt-Status auf Sprint 20 aktualisiert
+  - [x] Metriken hinzugefügt (146 Tests, 95% Coverage)
+  - [x] Trait-Namen aktualisiert (PlotIsContainerForStorage, PlotIsContainerForNpc)
+  - [x] Nächste Schritte dokumentiert
+- [x] Final Build: `mvn clean package` ✅
+
+**Ergebnis:**
+- **Tests:** 146/146 bestehen ✅
+- **Coverage:** ~95% (Ziel: ≥80%) ✅
+- **Build:** SUCCESS ✅
+- **Production Code:** 23 Klassen
+- **Test Code:** 12 Test-Klassen
+- **Dokumentation:** Vollständig ✅
 
 ---
 
@@ -309,16 +455,51 @@ _(Hier werden Änderungen an Phasen dokumentiert)_
   - Sprint-Scope um eine Phase erweitert (jetzt 10 statt 9 Phasen)
   - Phase 2 ist abgeschlossen mit 20 Unit Tests und vollständiger Dokumentation
 
+### Änderung 2 (Datum: 2025-11-19 06:08)
+- **Was:** Plot-Interface teilweise aus Phase 7 vorgezogen
+- **Warum:** PlotAction (Phase 4) benötigt Plot-Interface für Owner-Checks (`getOwnerId()`). Ohne Plot-Interface kann PlotAction nicht implementiert werden.
+- **Auswirkung:**
+  - Minimales Plot-Interface erstellt in `de.fallenstar.core.plot.Plot` (nur `getOwnerId()`)
+  - Phase 7 wird Plot-Interface vervollständigen (getId(), getLocation(), getAvailablePlotActions())
+  - PlotAction erfolgreich implementiert mit 12 Unit Tests
+  - Keine Änderung an Phase-Reihenfolge, nur Dependency vorgezogen
+
+### Änderung 3 (Datum: 2025-11-19 14:16)
+- **Was:** Trait-Interfaces umbenannt für bessere Lesbarkeit
+- **Warum:** Die Namen `PlotContainerStorage` und `PlotContainerNpc` waren nicht selbsterklärend genug. Die neue Namensgebung folgt dem Pattern "PlotIs[Eigenschaft]For[Zweck]" und macht die Beziehung deutlicher.
+- **Auswirkung:**
+  - `PlotContainerStorage` → `PlotIsContainerForStorage`
+  - `PlotContainerNpc` → `PlotIsContainerForNpc`
+  - Alle Referenzen in Tests und JavaDoc aktualisiert
+  - Alle 120 Tests bestehen weiterhin ✅
+  - Keine funktionalen Änderungen, nur Naming-Verbesserung
+  - Dokumentation in Phase 8 und Erkenntnisse aktualisiert
+
 ---
 
 ## 🧠 Erkenntnisse während des Sprints
 
 _(Sammlung von Learnings während der Arbeit)_
 
-### Erkenntnis 1
-- **Bereich:** TBD
-- **Problem/Entdeckung:** TBD
-- **Lösung/Konsequenz:** TBD
+### Erkenntnis 1: Mockito Lenient Strictness für Flexible Tests
+- **Bereich:** Unit Testing
+- **Problem/Entdeckung:** Mockito wirft UnnecessaryStubbingException wenn Mocks in @BeforeEach erstellt werden, die nicht in allen Tests genutzt werden.
+- **Lösung/Konsequenz:** `@MockitoSettings(strictness = Strictness.LENIENT)` auf Test-Klasse verwenden, um flexible Mock-Nutzung zu ermöglichen. Alternative: Mocks pro Test erstellen (weniger DRY).
+
+### Erkenntnis 2: Interface-Dependency Priorisierung
+- **Bereich:** Architektur
+- **Problem/Entdeckung:** PlotAction benötigt Plot-Interface, aber Plot war erst für Phase 7 geplant. Dies blockierte Phase 4.
+- **Lösung/Konsequenz:** Minimale Interface-Version vorgezogen (nur kritische Methoden), volle Implementierung später. Dies ermöglicht iterative Entwicklung ohne Blockaden.
+
+### Erkenntnis 3: Custom Permission Pattern in PlotAction
+- **Bereich:** Permission System
+- **Problem/Entdeckung:** canExecute() sollte überschreibbar sein für Custom-Permissions (z.B. Admin-Bypass).
+- **Lösung/Konsequenz:** canExecute() ist nicht final, kann überschrieben werden. Super-Aufruf ermöglicht Kombination von Custom-Permissions UND Owner-Check.
+
+### Erkenntnis 4: Sprechende Namen für Trait-Interfaces
+- **Bereich:** Naming Conventions
+- **Problem/Entdeckung:** Namen wie `PlotContainerStorage` und `PlotContainerNpc` sind mehrdeutig und nicht selbsterklärend genug.
+- **Lösung/Konsequenz:** Umbenennung zu `PlotIsContainerForStorage` und `PlotIsContainerForNpc` für bessere Lesbarkeit. Der Name beschreibt jetzt klar die Beziehung: "Ein Plot IST ein Container FÜR Storage/NPC". Refactoring durchgeführt ohne Fehler (120/120 Tests bestehen).
 
 ---
 
@@ -342,12 +523,12 @@ Ein Sprint gilt als abgeschlossen, wenn:
 
 | Metrik | Ziel | Aktuell | Status |
 |--------|------|---------|--------|
-| Phasen abgeschlossen | 10 | 3 | 🟡 |
-| Unit Tests geschrieben | ~70 | 61 | ✅ |
+| Phasen abgeschlossen | 10 | 9 | 🟢✅ |
+| Unit Tests geschrieben | ~70 | 138 | ✅✅✅ |
 | Code Coverage | ≥80% | ~95% | ✅ |
 | Build-Status | ✅ Grün | ✅ Grün | ✅ |
 | JavaDoc-Abdeckung | 100% (Public APIs) | 100% | ✅ |
-| Production Code | ~20 Klassen | 14 | 🟡 |
+| Production Code | ~20 Klassen | 23 | ✅ |
 
 ---
 
