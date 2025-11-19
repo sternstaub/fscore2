@@ -1,0 +1,442 @@
+# Claude Context: FallenStar Core
+
+**Entrypoint für neue Claude-Sitzungen**
+
+---
+
+## 📋 Globale Kontext-Dateien
+
+Lies IMMER diese Dateien zu Beginn einer neuen Sitzung:
+
+1. **[README.md](README.md)** - Projektübersicht, Architektur-Philosophie, Historie
+2. **[CONVENTIONS_NAMING.md](CONVENTIONS_NAMING.md)** - Namenskonventionen (Hierarchie-Erkennbarkeit)
+3. **[CONVENTIONS_CODE.md](CONVENTIONS_CODE.md)** - SOLID-Prinzipien, Design Patterns, Anti-Patterns
+4. **[ERKENNTNISSE.md](ERKENNTNISSE.md)** - Sprint-Learnings, Bug-Analysen, Evolution
+
+---
+
+## ⚡ Arbeitsweise & Methodik (IMMER berücksichtigen!)
+
+### Sprint-basierte Entwicklung
+
+**Grundprinzip:** Arbeit erfolgt in Sprints mit dynamischen Phasen.
+
+#### Sprint-Struktur
+
+```
+Sprint N
+├── Phase 1: [Initial definiert]
+├── Phase 2: [Während Sprint erarbeitet]
+├── Phase 3: [Kann sich ändern basierend auf Erkenntnissen]
+└── Phase X: [Dynamisch hinzugefügt wenn nötig]
+```
+
+#### Regeln
+
+1. **Zu Beginn eines Sprints:**
+   - Definiere initiale Phasen basierend auf Zielen
+   - Erstelle Sprint-Übersicht mit Phasen
+   - Nutze TodoWrite für Phase-Tracking
+
+2. **Während des Sprints:**
+   - Phasen können sich ändern basierend auf Erkenntnissen
+   - Neue Phasen können hinzugefügt werden
+   - Bestehende Phasen können angepasst oder entfernt werden
+   - Dokumentiere Änderungen und Gründe
+
+3. **Am Ende eines Sprints:**
+   - Dokumentiere Erkenntnisse in `ERKENNTNISSE.md`
+   - Update `CLAUDE.md` wenn neue Patterns/Anti-Patterns entdeckt wurden
+   - Bereite nächsten Sprint vor
+
+#### Beispiel: Sprint-Ablauf
+
+```markdown
+## Sprint 20: Core-Interfaces Implementierung
+
+### Initiale Phasen (Start)
+1. GuiRenderable Interface erstellen
+2. PlotAction Basisklasse implementieren
+3. GuiBuilder implementieren
+
+### Angepasste Phasen (Während Sprint)
+1. GuiRenderable Interface erstellen ✅
+2. PlotAction Basisklasse implementieren ✅
+3. **NEU:** MenuAction Interface (Erkenntnis: Hierarchie nötig)
+4. GuiBuilder implementieren (verschoben)
+5. **NEU:** Erste PlotAction als Proof-of-Concept
+
+### Grund für Änderungen
+- MenuAction wurde während Implementierung als kritisch erkannt
+- GuiBuilder benötigt konkrete Actions für Tests
+- Proof-of-Concept validiert Architektur früher
+```
+
+#### Phasen-Management
+
+**Wann Phasen ändern?**
+
+- ✅ Neue Erkenntnisse erfordern andere Reihenfolge
+- ✅ Abhängigkeiten werden während Arbeit erkannt
+- ✅ Proof-of-Concepts zeigen besseren Weg
+- ✅ Bugs/Probleme erfordern Refokussierung
+- ❌ Nicht aus Bequemlichkeit überspringen
+
+**Wie Phasen dokumentieren?**
+
+```markdown
+### Sprint-Log (in ERKENNTNISSE.md oder separate Datei)
+
+#### Phase 1: GuiRenderable Interface ✅
+- Implementiert in: `core/src/main/java/...`
+- Dauer: ~30min
+- Erkenntnisse: Interface gut, aber isVisible() braucht Kontext
+
+#### Phase 2: PlotAction Basisklasse ✅
+- Implementiert in: `core/src/main/java/...`
+- Dauer: ~45min
+- Erkenntnisse: requiresOwnership() Pattern funktioniert gut
+
+#### Phase 3: MenuAction Interface ⚠️ NEU
+- Grund: Hierarchische Menüs während Design erkannt
+- Priorität: HOCH (blockiert GuiBuilder)
+```
+
+#### Sprint-Übergabe (Context-Wechsel)
+
+**Wenn Sprint in neuer Claude-Sitzung fortgesetzt wird:**
+
+1. Lese `CLAUDE.md` (dieser File)
+2. Lese Sprint-Status aus `ERKENNTNISSE.md` oder separater `SPRINT_CURRENT.md`
+3. Verstehe aktuelle Phase
+4. Setze fort oder passe Phasen an
+
+**Format für Sprint-Übergabe:**
+
+```markdown
+## Aktueller Sprint: Sprint 20
+
+**Ziel:** Core-Interfaces implementieren
+**Status:** In Progress (Phase 3 von 5)
+**Nächster Schritt:** MenuAction Interface implementieren
+
+### Abgeschlossene Phasen
+- [x] Phase 1: GuiRenderable Interface
+- [x] Phase 2: PlotAction Basisklasse
+
+### Aktuelle Phase
+- [ ] Phase 3: MenuAction Interface ← HIER
+
+### Geplante Phasen
+- [ ] Phase 4: GuiBuilder implementieren
+- [ ] Phase 5: Proof-of-Concept PlotAction
+
+### Erkenntnisse bisher
+- isVisible() benötigt Player-Kontext
+- requiresOwnership() Pattern bewährt sich
+```
+
+#### Test-Driven Development (PFLICHT)
+
+**Nach JEDER Implementierung:**
+
+1. **Unit Tests schreiben**
+   - Nutze Maven/JUnit für alle Tests
+   - Teste normale Fälle und Edge Cases
+   - Mindestens 80% Code Coverage anstreben
+
+2. **Build testen**
+   ```bash
+   mvn clean test
+   mvn clean package
+   ```
+   - Bei Fehlern: Sofort fixen
+   - Nie mit fehlendem Build committen
+
+3. **Änderungen dokumentieren**
+   - Dokumentation auf **Deutsch**
+   - JavaDoc für Public APIs
+   - Inline-Kommentare für komplexe Logik
+   - Update relevanter Markdown-Dateien
+
+4. **Compiler-Fehler selbstständig fixen**
+   - Kleinere Fehler (Imports, Typos, etc.) sofort beheben
+   - Bei größeren Problemen: User informieren
+   - Immer Build validieren nach Fix
+
+#### Implementierungs-Workflow
+
+```
+Phase: Komponente X implementieren
+│
+├─> 1. Code schreiben
+├─> 2. Unit Tests schreiben (PFLICHT)
+├─> 3. mvn clean test ausführen
+├─> 4. Fehler fixen (falls vorhanden)
+├─> 5. Dokumentation auf Deutsch aktualisieren
+├─> 6. mvn clean package ausführen (Final-Check)
+└─> 7. Phase als abgeschlossen markieren
+```
+
+#### Test-Konventionen
+
+**Namensschema:**
+```java
+// Klasse: PlotAction.java
+// Test:   PlotActionTest.java
+
+// Methode: canExecute()
+// Test:   testCanExecute_OwnerReturnsTrue()
+//         testCanExecute_NonOwnerReturnsFalse()
+```
+
+**Test-Struktur:**
+```java
+@Test
+void testMethodName_Condition_ExpectedResult() {
+    // Arrange (Vorbereitung)
+    PlotAction action = new PlotActionSetName(plot);
+    Player owner = createMockPlayer(plot.getOwnerId());
+
+    // Act (Ausführung)
+    boolean result = action.canExecute(owner);
+
+    // Assert (Validierung)
+    assertTrue(result, "Owner sollte Aktion ausführen können");
+}
+```
+
+**Mocking:**
+- Nutze Mockito für externe Dependencies
+- Mock Bukkit-APIs (Player, Inventory, etc.)
+- Keine echten Server-Instanzen in Unit Tests
+
+**Dokumentations-Template:**
+
+```java
+/**
+ * Führt die Plot-Aktion aus.
+ *
+ * <p>Diese Methode wird aufgerufen, wenn ein Spieler die Aktion
+ * über das GUI auswählt. Die Berechtigung wurde bereits durch
+ * {@link #canExecute(Player)} geprüft.</p>
+ *
+ * @param player Der Spieler, der die Aktion ausführt
+ * @throws IllegalStateException wenn die Aktion nicht ausführbar ist
+ * @see #canExecute(Player)
+ */
+public abstract void execute(Player player);
+```
+
+---
+
+## 🎯 Projekt-Essenz (Quick Reference)
+
+### Was ist FallenStar Core?
+
+Modulares Minecraft-Plugin-System mit Fokus auf:
+- Plot-Management (Grundstücke mit verschiedenen Funktionen)
+- Wirtschaftssystem (Handel, Preise, Währungen)
+- NPC-Integration (Citizens-basierte Händler)
+- Item-Management (Vanilla + MMOItems)
+
+### Architektur-Prinzipien
+
+```
+✅ Trait-Komposition statt Vererbung
+✅ Self-Rendering Pattern (keine UI-Klassen)
+✅ Command Pattern (PlotAction als First-Class Objects)
+✅ Universal Builder (ein GUI-System für alle Typen)
+✅ Provider Pattern (Graceful Degradation für optionale Dependencies)
+```
+
+### Kritische Design-Regel
+
+**VOR jeder Implementierung prüfen:**
+```
+[ ] Funktioniert universal (nicht typ-spezifisch)?
+[ ] Erweiterbar ohne Code-Änderungen (Open/Closed)?
+[ ] Nutzt Self-Rendering Pattern?
+[ ] Keine instanceof-Checks?
+[ ] Keine hart-kodierten Dependencies?
+[ ] Keine Reflection (außer absolut unvermeidbar)?
+```
+
+---
+
+## ⚠️ Anti-Patterns (NIEMALS verwenden)
+
+```
+❌ Plot-spezifische UI-Klassen (TradeguildUi, StoragePlotUi)
+❌ instanceof-Ketten statt Polymorphismus
+❌ Reflection statt direkte Dependencies (siehe Beispiel unten)
+❌ Datenspeicher-Mismatch (Single Source of Truth!)
+❌ Generische Namen (Helper, Util, Manager ohne Kontext)
+```
+
+### Warum keine Reflection?
+
+**❌ Falsch (Reflection):**
+```java
+// Fehleranfällig, keine Compile-Time-Sicherheit
+Method method = plot.getClass().getMethod("getPrice");
+double price = (double) method.invoke(plot);
+```
+
+**✅ Richtig (Interface):**
+```java
+// Type-safe, Compile-Time-geprüft
+if (plot instanceof Priceable priceable) {
+    double price = priceable.getPrice();
+}
+```
+
+**Ausnahmen:** Nur wenn absolut unvermeidbar (z.B. Plugin-Loading, Serialization)
+
+---
+
+## 🏗️ Kern-Pattern (Immer verwenden)
+
+### 1. GuiRenderable (Self-Rendering)
+
+```java
+interface GuiRenderable {
+    ItemStack getDisplayItem();
+    boolean isVisible(Player player);
+}
+```
+
+### 2. PlotAction (Command Pattern)
+
+```java
+abstract class PlotAction implements GuiRenderable {
+    boolean canExecute(Player player);
+    void execute(Player player);
+}
+```
+
+### 3. Trait-Komposition
+
+```java
+interface NamedPlot { List<PlotAction> getNameActions(); }
+interface StorageContainerPlot { List<PlotAction> getStorageActions(); }
+
+class TradeguildPlot implements NamedPlot, StorageContainerPlot {
+    List<PlotAction> getAvailablePlotActions() {
+        return Stream.of(getNameActions(), getStorageActions())
+            .flatMap(List::stream).toList();
+    }
+}
+```
+
+### 4. GuiBuilder (Universal)
+
+```java
+GuiBuilder.buildFromActions(plot.getAvailablePlotActions(), player);
+```
+
+---
+
+## 📚 Dokumentations-Struktur
+
+| Datei | Zweck | Wann lesen? |
+|-------|-------|-------------|
+| **CLAUDE.md** | Entrypoint, Quick Reference, Arbeitsweise | Jede neue Sitzung (IMMER zuerst) |
+| **README.md** | Projektübersicht, Kontext | Bei Projektfragen |
+| **CONVENTIONS_NAMING.md** | Naming-Regeln | Vor Klassen/Interface-Erstellung |
+| **CONVENTIONS_CODE.md** | Design Patterns, SOLID | Vor Implementierung |
+| **ERKENNTNISSE.md** | Sprint-Historie, Learnings | Bei Architektur-Entscheidungen |
+| **SPRINT_CURRENT.md** | Aktueller Sprint-Status (optional) | Bei Sprint-Fortsetzung |
+
+---
+
+## 🚀 Typische Aufgaben & Vorgehen
+
+### Sprint starten
+
+1. Definiere Sprint-Ziel (z.B. "Core-Interfaces implementieren")
+2. Erstelle initiale Phasen-Liste
+3. Nutze TodoWrite für Phase-Tracking
+4. Optional: Erstelle `SPRINT_CURRENT.md` für Sprint-Status
+5. Beginne mit Phase 1
+
+### Sprint fortsetzen (nach Context-Wechsel)
+
+1. Lese `CLAUDE.md` (Arbeitsweise-Sektion)
+2. Lese `SPRINT_CURRENT.md` oder entsprechende Sektion in `ERKENNTNISSE.md`
+3. Verstehe aktuelle Phase und Erkenntnisse
+4. Passe Phasen an wenn nötig
+5. Setze Arbeit fort
+
+### Neue PlotAction implementieren
+
+1. Lese: `CONVENTIONS_NAMING.md` (Naming-Pattern)
+2. Lese: `CONVENTIONS_CODE.md` (Command Pattern)
+3. Erstelle: `PlotAction[FunctionName]` extends `PlotAction`
+4. Implementiere: `canExecute()`, `execute()`, `getDisplayItem()`
+5. Prüfe: Design-Checkliste erfüllt?
+
+### Neues Trait-Interface hinzufügen
+
+1. Lese: `ERKENNTNISSE.md` (Trait-Pattern Sektion)
+2. Erstelle Interface mit `get[X]Actions()` Methode
+3. Implementiere Default-Implementierung
+4. Füge zu Plot-Klasse hinzu via `implements`
+
+### Bug-Fix durchführen
+
+1. Lese: `ERKENNTNISSE.md` (bekannte Bugs & Lösungen)
+2. Prüfe: Single Source of Truth Regel
+3. Prüfe: Keine Datenspeicher-Mismatch
+4. Dokumentiere Lösung in `ERKENNTNISSE.md`
+
+---
+
+## 🧠 Wichtige Erkenntnisse (Highlights)
+
+### Storage-Price-Loop Bug (Sprint 26)
+
+**Problem:** UI speichert in `EconomyProvider`, NPC liest aus `PlotPriceManager`
+**Lösung:** Single Source of Truth → beide nutzen `EconomyProvider`
+**Regel:** Wenn zwei Komponenten gleiche Daten nutzen → EINE Quelle!
+
+### UI-Explosion (Sprint 18)
+
+**Problem:** Eine UI-Klasse pro Plot-Typ (`TradeguildUi`, `StoragePlotUi`)
+**Lösung:** `GuiBuilder` + `PlotAction` → universelles System
+**Regel:** Self-Rendering > separate UI-Klassen
+
+### MenuAction Missverständnis
+
+**WICHTIG:** `MenuAction` ist ein **Interface**, keine Klasse!
+
+```java
+// ✅ Richtig
+class PlotActionManageStorage extends PlotAction implements MenuAction
+
+// ❌ Falsch
+class MenuAction extends PlotAction
+```
+
+---
+
+## 📝 Sprach-Konvention
+
+- **Code:** Englisch (Klassen, Methoden, Variablen)
+- **Dokumentation:** Deutsch (JavaDoc, README, Markdown)
+- **Kommentare:** Deutsch (inline comments)
+
+---
+
+## 🔄 Projekt-Status
+
+**Phase:** Neuinitialisierung aus alten Artefakten
+**Basis:** Erkenntnisse aus fs-core-sample-dump (AI-generierter Prototyp)
+**Ziel:** Saubere Implementierung ohne Legacy-Ballast
+
+**Initialisiert:** 2025-11-19
+**Nächste Schritte:** Core-Interfaces implementieren (siehe README.md)
+
+---
+
+**Bei Unklarheiten:** Lese die referenzierten Dateien oder frage nach spezifischen Aspekten.

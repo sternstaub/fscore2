@@ -1,0 +1,65 @@
+name: FallenStarCore
+version: ${project.version}
+main: de.fallenstar.core.FallenStarCore
+api-version: 1.20
+description: Modulares Framework für Plot-, Economy-, UI- und Event-System
+author: FallenStar Development
+website: https://github.com/fallenstar
+
+# Softdepend: Optionale Plugins (Module können diese nutzen)
+softdepend:
+  - Vault
+  - Citizens
+  - Towny
+  - MMOItems
+
+# Commands
+commands:
+  plot:
+    description: Plot-Verwaltung
+    usage: /<command> [info|list|storage]
+    aliases: [p, plots]
+
+  economy:
+    description: Economy-System
+    usage: /<command> [balance|price|currency]
+    aliases: [eco, money]
+
+  npc:
+    description: NPC-Verwaltung
+    usage: /<command> [spawn|list|configure]
+
+  fsadmin:
+    description: Admin-Befehle für FallenStar Core
+    usage: /<command> [reload|info|debug]
+    permission: fallenstar.admin
+
+# Permissions
+permissions:
+  fallenstar.admin:
+    description: Admin-Zugriff auf alle FallenStar-Funktionen
+    default: op
+
+  fallenstar.plot.create:
+    description: Plots erstellen
+    default: op
+
+  fallenstar.plot.delete:
+    description: Plots löschen
+    default: op
+
+  fallenstar.plot.manage:
+    description: Eigene Plots verwalten
+    default: true
+
+  fallenstar.economy.admin:
+    description: Economy-System verwalten
+    default: op
+
+  fallenstar.npc.spawn:
+    description: NPCs spawnen
+    default: op
+
+  fallenstar.npc.configure:
+    description: NPCs konfigurieren
+    default: op
