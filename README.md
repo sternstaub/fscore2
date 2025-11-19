@@ -1,93 +1,207 @@
-# Fallenstar Core
+# FallenStar Core
 
+**Status:** Neuinitialisierung aus alten Artefakten
+**Sprache:** Deutsch (Dokumentation) / Englisch (Code)
+**Plattform:** Minecraft Plugin (Spigot/Paper)
 
+---
 
-## Getting started
+## Projektübersicht
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+FallenStar Core ist ein modulares Minecraft-Plugin-System mit Fokus auf:
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+- **Plot-Management** (Grundstücke mit verschiedenen Funktionen)
+- **Wirtschaftssystem** (Handel, Preise, Währungen)
+- **NPC-Integration** (Citizens-Integration für Händler und Quests)
+- **Item-Management** (Vanilla + MMOItems-Support)
 
-## Add your files
+---
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+## Architektur-Philosophie
+
+### Modularer Aufbau
 
 ```
-cd existing_repo
-git remote add origin https://gitlab.fallenstar.de/sternstaub/fallenstar-core.git
-git branch -M main
-git push -uf origin main
+core/              - Core-Plugin mit Interfaces und UI-Framework
+module-economy/    - Wirtschaftssystem
+module-items/      - Item-Management
+module-npcs/       - NPC-System
+module-plots/      - Plot-System
 ```
 
-## Integrate with your tools
+### Provider-Pattern (Graceful Degradation)
 
-- [ ] [Set up project integrations](https://gitlab.fallenstar.de/sternstaub/fallenstar-core/-/settings/integrations)
+Optionale Dependencies ohne Hard-Coupling:
+- **Towny** - Plot-Integration (optional)
+- **Vault** - Economy-Integration (optional)
+- **Citizens** - NPC-System (optional)
+- **MMOItems** - Custom Items (optional)
 
-## Collaborate with your team
+Wenn eine Dependency fehlt, läuft das System mit reduzierter Funktionalität weiter.
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+---
 
-## Test and Deploy
+## Kern-Prinzipien
 
-Use the built-in continuous integration in GitLab.
+### 1. Trait-basierte Komposition
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+```java
+interface NamedPlot { ... }
+interface StorageContainerPlot { ... }
+interface NpcContainerPlot { ... }
 
-***
+class TradeguildPlot implements NamedPlot, StorageContainerPlot, NpcContainerPlot {
+    // Kombiniert alle Traits
+}
+```
 
-# Editing this README
+### 2. Self-Rendering Pattern
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+Objekte rendern sich selbst, keine separaten UI-Klassen:
 
-## Suggestions for a good README
+```java
+class PlotAction implements GuiRenderable {
+    ItemStack getDisplayItem() { ... }
+    void execute(Player player) { ... }
+}
+```
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+### 3. Command Pattern
 
-## Name
-Choose a self-explaining name for your project.
+Aktionen als First-Class Objects:
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+```java
+abstract class PlotAction {
+    boolean canExecute(Player player);
+    void execute(Player player);
+    ItemStack getDisplayItem();
+}
+```
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+### 4. Universal Builder
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+Ein GUI-System für alle Plot-Typen:
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+```java
+GuiBuilder.buildFromActions(plot.getAvailablePlotActions(), player);
+```
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+---
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+## Design-Erkenntnisse
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+Dieses Projekt wurde ursprünglich in sehr kurzer Zeit AI-generiert und war inkonsistent. Die folgenden Erkenntnisse wurden während des Refactorings gewonnen:
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+### ✅ Was funktioniert
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+- **Trait-Komposition** statt tiefer Vererbungshierarchien
+- **Self-Rendering Pattern** eliminiert UI-Klassen-Explosion
+- **GuiBuilder** ermöglicht universelle, erweiterbare UIs
+- **MenuAction-Interface** für hierarchische Menüs
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+### ❌ Vermiedene Anti-Patterns
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+- Plot-spezifische UI-Klassen (`TradeguildUi`, `StoragePlotUi`)
+- `instanceof`-Ketten statt Polymorphismus
+- Reflection statt direkte Dependencies
+- Datenspeicher-Mismatch (verschiedene Quellen für gleiche Daten)
 
-## License
-For open source projects, say how it is licensed.
+### 🔄 Refactoring-Schwerpunkte
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+| Bereich | Problem | Lösung |
+|---------|---------|--------|
+| **Items** | CoinProvider hart-kodiert | CurrencyItem Interface + Registry |
+| **Plots** | Preis-Logik nur in StorageContainerPlot | Priceable Interface + Manager |
+| **NPCs** | Manuelle UI-Konstruktion | NpcAction + GuiBuilder |
+| **Economy** | TradeUI nicht GuiRenderable-konform | TradeAction mit Self-Rendering |
+
+---
+
+## Entwicklungs-Konventionen
+
+### Vor JEDER Implementierung prüfen
+
+- [ ] Funktioniert universal (nicht typ-spezifisch)?
+- [ ] Erweiterbar ohne Code-Änderungen (Open/Closed Principle)?
+- [ ] Nutzt Self-Rendering Pattern?
+- [ ] Keine `instanceof`-Checks?
+- [ ] Keine hart-kodierten Dependencies?
+
+### Namenskonventionen
+
+**Hierarchie muss erkennbar sein:**
+
+```
+✅ PlotAction → PlotActionSetName
+❌ SetNameAction → PlotAction
+```
+
+Siehe: [CONVENTIONS_NAMING.md](CONVENTIONS_NAMING.md)
+
+### Code-Prinzipien
+
+- **SOLID-Prinzipien** konsequent anwenden
+- **Design Patterns** für wiederkehrende Probleme
+- **Keine Reflection** außer absolut notwendig
+- **Single Source of Truth** für Daten
+
+Siehe: [CONVENTIONS_CODE.md](CONVENTIONS_CODE.md)
+
+---
+
+## Historie & Kontext
+
+### Ursprung
+
+Das Projekt wurde aus einem AI-generierten Prototyp ("fs-core-sample-dump") extrahiert, der folgende Probleme hatte:
+
+- **Inkonsistente Architektur** durch iteratives Design
+- **Zersplitterte Konzepte** (Preis-Logik an mehreren Stellen)
+- **UI-Klassen-Explosion** (eine Klasse pro Plot-Typ)
+- **Datenspeicher-Mismatch** (Storage-Price-Loop-Bug)
+
+### Sprint 18 Durchbruch
+
+Die Einführung des **GuiBuilder + PlotAction + Trait-Pattern** löste die Architektur-Probleme:
+
+- Ein System für alle Plot-Typs
+- Erweiterbar ohne Core-Änderungen
+- Self-Documenting durch naming conventions
+
+### Neuinitialisierung (Aktuell)
+
+Dieses Repository ist eine **saubere Neuinitialisierung** mit:
+
+- Nur den bewährten Design-Erkenntnissen
+- Ohne Legacy-Code-Ballast
+- Fokus auf klare Architektur von Anfang an
+
+---
+
+## Nächste Schritte
+
+1. **Core-Module strukturieren** (Interfaces, Base-Klassen)
+2. **Plot-System implementieren** (Trait-basiert)
+3. **Economy-Module** (Provider-Pattern)
+4. **NPC-Integration** (GuiRenderable-konform)
+5. **Item-System** (CurrencyRegistry)
+
+---
+
+## Dokumentation
+
+- **[CONVENTIONS_NAMING.md](CONVENTIONS_NAMING.md)** - Namenskonventionen
+- **[CONVENTIONS_CODE.md](CONVENTIONS_CODE.md)** - Code-Prinzipien & Patterns
+- **[ERKENNTNISSE.md](ERKENNTNISSE.md)** - Sprint-Learnings & Evolution
+
+---
+
+## Lizenz
+
+*TBD*
+
+---
+
+## Kontakt
+
+*TBD*
