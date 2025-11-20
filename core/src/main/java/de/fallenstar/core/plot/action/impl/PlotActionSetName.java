@@ -1,6 +1,6 @@
 package de.fallenstar.core.plot.action.impl;
 
-import de.fallenstar.core.plot.action.PlotAction;
+import de.fallenstar.core.plot.action.AbstractPlotAction;
 import de.fallenstar.core.plot.trait.PlotWithName;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -10,7 +10,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.List;
 
 /**
- * PlotAction zum Setzen/Ändern des Plot-Namens.
+ * AbstractPlotAction zum Setzen/Ändern des Plot-Namens.
  *
  * <p>Diese Action ermöglicht es dem Plot-Besitzer, den Namen seines Plots
  * zu ändern. Die Action funktioniert nur auf Plots, die das {@link PlotWithName}
@@ -49,11 +49,11 @@ import java.util.List;
  *
  * @author FallenStar Development
  * @version 1.0.0-SNAPSHOT
- * @see PlotAction
+ * @see AbstractPlotAction
  * @see PlotWithName
  * @since Phase 9
  */
-public class PlotActionSetName extends PlotAction {
+public class PlotActionSetName extends AbstractPlotAction {
 
     private final PlotWithName namedPlot;
 
@@ -92,7 +92,7 @@ public class PlotActionSetName extends PlotAction {
     @Override
     public void execute(Player player) {
         // Placeholder-Implementierung für Phase 9
-        player.sendMessage("§e[PlotAction] §7Namen ändern für Plot: §f" + namedPlot.getName());
+        player.sendMessage("§e[AbstractPlotAction] §7Namen ändern für Plot: §f" + namedPlot.getName());
         player.sendMessage("§7Diese Funktion wird in einer zukünftigen Phase implementiert.");
         player.sendMessage("§7Du könntest hier einen neuen Namen eingeben.");
     }

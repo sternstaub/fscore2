@@ -1,7 +1,7 @@
 package de.fallenstar.core.plot.trait;
 
 import de.fallenstar.core.plot.Plot;
-import de.fallenstar.core.plot.action.PlotAction;
+import de.fallenstar.core.plot.action.AbstractPlotAction;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -82,7 +82,7 @@ class PlotTraitTest {
     void testPlotWithName_GetNameActionsReturnsEmptyList() {
         TestPlotWithName plot = new TestPlotWithName(plotId, ownerId, location);
 
-        List<PlotAction> actions = plot.getNameActions();
+        List<AbstractPlotAction> actions = plot.getNameActions();
 
         assertNotNull(actions, "Actions sollten nicht null sein");
         assertTrue(actions.isEmpty(), "Actions sollten leer sein (Placeholder für Phase 9)");
@@ -115,7 +115,7 @@ class PlotTraitTest {
 
             TestPlotStorage plot = new TestPlotStorage(plotId, ownerId, location);
 
-            List<PlotAction> actions = plot.getStorageActions();
+            List<AbstractPlotAction> actions = plot.getStorageActions();
 
             assertNotNull(actions, "Actions sollten nicht null sein");
             assertTrue(actions.isEmpty(), "Actions sollten leer sein (Placeholder)");
@@ -147,7 +147,7 @@ class PlotTraitTest {
     void testPlotWithNpcContainer_GetNpcActionsReturnsEmptyList() {
         TestPlotNpc plot = new TestPlotNpc(plotId, ownerId, location);
 
-        List<PlotAction> actions = plot.getNpcActions();
+        List<AbstractPlotAction> actions = plot.getNpcActions();
 
         assertNotNull(actions, "Actions sollten nicht null sein");
         assertTrue(actions.isEmpty(), "Actions sollten leer sein (Placeholder)");
@@ -187,7 +187,7 @@ class PlotTraitTest {
 
             TestPlotAllTraits plot = new TestPlotAllTraits(plotId, ownerId, location);
 
-            List<PlotAction> actions = plot.getAvailablePlotActions();
+            List<AbstractPlotAction> actions = plot.getAvailablePlotActions();
 
             assertNotNull(actions, "Actions sollten nicht null sein");
             // Aktuell alle leer (Placeholder), aber Methode funktioniert
@@ -254,7 +254,7 @@ class PlotTraitTest {
         }
 
         @Override
-        public List<PlotAction> getAvailablePlotActions() {
+        public List<AbstractPlotAction> getAvailablePlotActions() {
             return new ArrayList<>(getNameActions());
         }
     }
@@ -298,7 +298,7 @@ class PlotTraitTest {
         }
 
         @Override
-        public List<PlotAction> getAvailablePlotActions() {
+        public List<AbstractPlotAction> getAvailablePlotActions() {
             return new ArrayList<>(getStorageActions());
         }
     }
@@ -344,7 +344,7 @@ class PlotTraitTest {
         }
 
         @Override
-        public List<PlotAction> getAvailablePlotActions() {
+        public List<AbstractPlotAction> getAvailablePlotActions() {
             return new ArrayList<>(getNpcActions());
         }
     }
@@ -414,7 +414,7 @@ class PlotTraitTest {
         }
 
         @Override
-        public List<PlotAction> getAvailablePlotActions() {
+        public List<AbstractPlotAction> getAvailablePlotActions() {
             // Trait-Komposition: Sammle alle Actions aus allen Traits
             return Stream.of(
                 getNameActions(),

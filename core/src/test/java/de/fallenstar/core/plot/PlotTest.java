@@ -1,6 +1,6 @@
 package de.fallenstar.core.plot;
 
-import de.fallenstar.core.plot.action.PlotAction;
+import de.fallenstar.core.plot.action.AbstractPlotAction;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
  * <p>Testet das Basis-Plot-Interface mit Fokus auf:</p>
  * <ul>
  *   <li>Kern-Methoden (getId, getOwnerId, getLocation)</li>
- *   <li>PlotAction-Integration (getAvailablePlotActions)</li>
+ *   <li>AbstractPlotAction-Integration (getAvailablePlotActions)</li>
  *   <li>Trait-Pattern Komposition</li>
  *   <li>Null-Safety</li>
  * </ul>
@@ -115,10 +115,10 @@ class PlotTest {
 
     @Test
     @DisplayName("getAvailablePlotActions: Gibt Actions zurück")
-    void testGetAvailablePlotActions_ReturnsActions() {
+    void testGetAvailableAbstractPlotActions_ReturnsActions() {
         TestPlotWithActions plot = new TestPlotWithActions(plotId, ownerId, location);
 
-        List<PlotAction> actions = plot.getAvailablePlotActions();
+        List<AbstractPlotAction> actions = plot.getAvailablePlotActions();
 
         assertNotNull(actions, "Actions sollten nicht null sein");
         assertEquals(2, actions.size(), "Sollte 2 Actions haben");
@@ -126,10 +126,10 @@ class PlotTest {
 
     @Test
     @DisplayName("getAvailablePlotActions: Leere Liste für Plot ohne Actions")
-    void testGetAvailablePlotActions_EmptyListForPlotWithoutActions() {
+    void testGetAvailableAbstractPlotActions_EmptyListForPlotWithoutActions() {
         TestPlot plot = new TestPlot(plotId, ownerId, location);
 
-        List<PlotAction> actions = plot.getAvailablePlotActions();
+        List<AbstractPlotAction> actions = plot.getAvailablePlotActions();
 
         assertNotNull(actions, "Actions sollten nicht null sein");
         assertTrue(actions.isEmpty(), "Actions sollten leer sein");
@@ -137,7 +137,7 @@ class PlotTest {
 
     @Test
     @DisplayName("getAvailablePlotActions: Gibt niemals null zurück")
-    void testGetAvailablePlotActions_NeverReturnsNull() {
+    void testGetAvailableAbstractPlotActions_NeverReturnsNull() {
         TestPlot plot = new TestPlot(plotId, ownerId, location);
 
         assertNotNull(plot.getAvailablePlotActions(),
@@ -151,7 +151,7 @@ class PlotTest {
     void testTraitPattern_CombinesMultipleTraits() {
         TestPlotWithMultipleTraits plot = new TestPlotWithMultipleTraits(plotId, ownerId, location);
 
-        List<PlotAction> actions = plot.getAvailablePlotActions();
+        List<AbstractPlotAction> actions = plot.getAvailablePlotActions();
 
         // 2 Actions vom ersten Trait + 3 Actions vom zweiten Trait = 5 Actions total
         assertNotNull(actions, "Actions sollten nicht null sein");
@@ -183,19 +183,19 @@ class PlotTest {
     // ==================== Integration Tests ====================
 
     @Test
-    @DisplayName("Integration: Plot mit PlotActions funktioniert korrekt")
+    @DisplayName("Integration: Plot mit AbstractPlotActions funktioniert korrekt")
     void testIntegration_PlotWithActions() {
         TestPlotWithActions plot = new TestPlotWithActions(plotId, ownerId, location);
 
         // Hole Actions
-        List<PlotAction> actions = plot.getAvailablePlotActions();
+        List<AbstractPlotAction> actions = plot.getAvailablePlotActions();
 
         // Validiere Actions
         assertNotNull(actions, "Actions sollten nicht null sein");
         assertEquals(2, actions.size(), "Sollte 2 Actions haben");
 
         // Teste erste Action
-        PlotAction firstAction = actions.get(0);
+        AbstractPlotAction firstAction = actions.get(0);
         assertNotNull(firstAction, "Erste Action sollte nicht null sein");
         assertNotNull(firstAction.getDisplayItem(), "DisplayItem sollte nicht null sein");
     }
@@ -232,7 +232,7 @@ class PlotTest {
         }
 
         @Override
-        public List<PlotAction> getAvailablePlotActions() {
+        public List<AbstractPlotAction> getAvailablePlotActions() {
             return List.of();
         }
     }
@@ -267,7 +267,7 @@ class PlotTest {
         }
 
         @Override
-        public List<PlotAction> getAvailablePlotActions() {
+        public List<AbstractPlotAction> getAvailablePlotActions() {
             return List.of(
                 new TestAction(this, Material.DIAMOND),
                 new TestAction(this, Material.GOLD_INGOT)
@@ -305,22 +305,22 @@ class PlotTest {
         }
 
         @Override
-        public List<PlotAction> getAvailablePlotActions() {
+        public List<AbstractPlotAction> getAvailablePlotActions() {
             // Simuliert Trait-Komposition
-            List<PlotAction> actions = new ArrayList<>();
+            List<AbstractPlotAction> actions = new ArrayList<>();
             actions.addAll(getTraitOneActions());
             actions.addAll(getTraitTwoActions());
             return actions;
         }
 
-        private List<PlotAction> getTraitOneActions() {
+        private List<AbstractPlotAction> getTraitOneActions() {
             return List.of(
                 new TestAction(this, Material.DIAMOND),
                 new TestAction(this, Material.EMERALD)
             );
         }
 
-        private List<PlotAction> getTraitTwoActions() {
+        private List<AbstractPlotAction> getTraitTwoActions() {
             return List.of(
                 new TestAction(this, Material.GOLD_INGOT),
                 new TestAction(this, Material.IRON_INGOT),
@@ -330,9 +330,9 @@ class PlotTest {
     }
 
     /**
-     * Minimale PlotAction für Tests.
+     * Minimale AbstractPlotAction für Tests.
      */
-    private static class TestAction extends PlotAction {
+    private static class TestAction extends AbstractPlotAction {
         private final Material material;
 
         TestAction(Plot plot, Material material) {

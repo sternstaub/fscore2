@@ -8,7 +8,9 @@ import org.bukkit.inventory.ItemStack;
 /**
  * Abstrakte Basisklasse für alle Plot-Aktionen (Command Pattern).
  *
- * <p>PlotAction kombiniert drei Verantwortlichkeiten in einer Klasse:</p>
+ * <p><b>Naming Convention:</b> Prefix-Pattern für abstrakte Klassen: {@code Abstract[Name]}</p>
+ *
+ * <p>AbstractPlotAction kombiniert drei Verantwortlichkeiten in einer Klasse:</p>
  * <ul>
  *   <li><b>Business Logic:</b> {@link #execute(Player)} führt die Aktion aus</li>
  *   <li><b>Permissions:</b> {@link #canExecute(Player)} prüft Berechtigungen</li>
@@ -16,7 +18,7 @@ import org.bukkit.inventory.ItemStack;
  * </ul>
  *
  * <p><b>Self-Rendering Pattern:</b></p>
- * <p>PlotActions rendern sich selbst im GUI durch Implementierung von
+ * <p>AbstractPlotAction-Subklassen rendern sich selbst im GUI durch Implementierung von
  * {@link GuiRenderable}. Es sind keine separaten UI-Klassen notwendig.</p>
  *
  * <p><b>Permission-System:</b></p>
@@ -28,7 +30,7 @@ import org.bukkit.inventory.ItemStack;
  *
  * <p><b>Beispiel-Implementierung:</b></p>
  * <pre>
- * public class PlotActionSetName extends PlotAction {
+ * public class PlotActionSetName extends AbstractPlotAction {
  *
  *     public PlotActionSetName(Plot plot) {
  *         super(plot);
@@ -54,7 +56,7 @@ import org.bukkit.inventory.ItemStack;
  *
  * <p><b>Verwendung:</b></p>
  * <pre>
- * PlotAction action = new PlotActionSetName(plot);
+ * AbstractPlotAction action = new PlotActionSetName(plot);
  *
  * if (action.canExecute(player)) {
  *     action.execute(player);
@@ -66,7 +68,7 @@ import org.bukkit.inventory.ItemStack;
  * <p><b>Trait-Pattern Integration:</b></p>
  * <pre>
  * interface PlotWithName extends Plot {
- *     default List&lt;PlotAction&gt; getNameActions() {
+ *     default List&lt;AbstractPlotAction&gt; getNameActions() {
  *         return List.of(new PlotActionSetName(this));
  *     }
  * }
@@ -77,7 +79,7 @@ import org.bukkit.inventory.ItemStack;
  * @see GuiRenderable
  * @see Plot
  */
-public abstract class PlotAction implements GuiRenderable {
+public abstract class AbstractPlotAction implements GuiRenderable {
 
     /**
      * Der Plot, auf dem diese Aktion ausgeführt wird.
@@ -88,12 +90,12 @@ public abstract class PlotAction implements GuiRenderable {
     protected final Plot plot;
 
     /**
-     * Erstellt eine neue PlotAction für den angegebenen Plot.
+     * Erstellt eine neue AbstractPlotAction für den angegebenen Plot.
      *
      * @param plot Der Plot, auf dem die Aktion ausgeführt werden soll (nicht null)
      * @throws IllegalArgumentException wenn plot null ist
      */
-    protected PlotAction(Plot plot) {
+    protected AbstractPlotAction(Plot plot) {
         if (plot == null) {
             throw new IllegalArgumentException("Plot darf nicht null sein");
         }

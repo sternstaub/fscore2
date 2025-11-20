@@ -1,6 +1,6 @@
 package de.fallenstar.core.integration;
 
-import de.fallenstar.core.plot.action.PlotAction;
+import de.fallenstar.core.plot.action.AbstractPlotAction;
 import de.fallenstar.core.plot.action.impl.PlotActionSetName;
 import de.fallenstar.core.plot.trait.PlotWithName;
 import de.fallenstar.core.ui.GuiBuilder;
@@ -31,13 +31,13 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Integration Tests für das Zusammenspiel von GuiBuilder und PlotActions.
+ * Integration Tests für das Zusammenspiel von GuiBuilder und AbstractPlotActions.
  *
  * <p>Diese Tests validieren das Self-Rendering Pattern und das Command Pattern
  * in einem realistischen Szenario:</p>
  * <ul>
  *   <li>Plots mit Traits (PlotWithName)</li>
- *   <li>Konkrete PlotActions (PlotActionSetName)</li>
+ *   <li>Konkrete AbstractPlotActions (PlotActionSetName)</li>
  *   <li>GuiBuilder erstellt GUI aus Actions</li>
  *   <li>Visibility-Filtering basierend auf Permissions</li>
  * </ul>
@@ -106,7 +106,7 @@ class GuiBuilderIntegrationTest {
             PlotActionSetName setNameAction = new PlotActionSetName(namedPlot);
 
             // Baue GUI aus Action
-            List<PlotAction> actions = List.of(setNameAction);
+            List<AbstractPlotAction> actions = List.of(setNameAction);
             Inventory gui = GuiBuilder.buildFromActions(actions, owner, "Plot verwalten");
 
             // Verifiziere GUI wurde erstellt
@@ -141,7 +141,7 @@ class GuiBuilderIntegrationTest {
                 "Multi-Action Plot"
             );
 
-            List<PlotAction> actions = namedPlot.getAvailablePlotActions();
+            List<AbstractPlotAction> actions = namedPlot.getAvailablePlotActions();
 
             // Baue GUI
             Inventory gui = GuiBuilder.buildFromActions(actions, owner, "Alle Actions");
@@ -176,7 +176,7 @@ class GuiBuilderIntegrationTest {
                 }
             };
 
-            List<PlotAction> actions = List.of(ownerOnlyAction);
+            List<AbstractPlotAction> actions = List.of(ownerOnlyAction);
 
             // Nicht-Owner baut GUI
             Inventory gui = GuiBuilder.buildFromActions(actions, nonOwner, "Test");
@@ -209,7 +209,7 @@ class GuiBuilderIntegrationTest {
             // class FullPlot implements PlotWithName, PlotWithStorageContainer, PlotWithNpcContainer
             // und getAvailablePlotActions() würde alle Trait-Actions kombinieren
 
-            List<PlotAction> actions = namedPlot.getAvailablePlotActions();
+            List<AbstractPlotAction> actions = namedPlot.getAvailablePlotActions();
 
             // Baue GUI
             Inventory gui = GuiBuilder.buildFromActions(actions, owner, "Alle Funktionen");
@@ -321,7 +321,7 @@ class GuiBuilderIntegrationTest {
         }
 
         @Override
-        public List<PlotAction> getAvailablePlotActions() {
+        public List<AbstractPlotAction> getAvailablePlotActions() {
             // Simuliert Trait-Komposition: Mehrere Actions aus Traits
             return List.of(
                 new PlotActionSetName(this),

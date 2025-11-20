@@ -1,6 +1,6 @@
 package de.fallenstar.core.plot.action.impl;
 
-import de.fallenstar.core.plot.action.PlotAction;
+import de.fallenstar.core.plot.action.AbstractPlotAction;
 import de.fallenstar.core.plot.trait.PlotWithName;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 /**
  * Unit Tests für PlotActionSetName.
  *
- * <p>Testet die erste konkrete PlotAction-Implementierung mit Fokus auf:</p>
+ * <p>Testet die erste konkrete AbstractPlotAction-Implementierung mit Fokus auf:</p>
  * <ul>
  *   <li>Ownership-Prüfung (nur Besitzer kann ausführen)</li>
  *   <li>GUI-Display-Item Generierung</li>
@@ -283,7 +283,7 @@ class PlotActionSetNameTest {
             );
 
             // Erstelle Action
-            PlotAction setNameAction = new PlotActionSetName(namedPlot);
+            AbstractPlotAction setNameAction = new PlotActionSetName(namedPlot);
 
             // Verifiziere, dass Action korrekt funktioniert
             assertNotNull(setNameAction.getDisplayItem());
@@ -343,7 +343,7 @@ class PlotActionSetNameTest {
         }
 
         @Override
-        public List<PlotAction> getAvailablePlotActions() {
+        public List<AbstractPlotAction> getAvailablePlotActions() {
             return List.of(new PlotActionSetName(this));
         }
     }
