@@ -20,9 +20,9 @@ import java.util.List;
  * └── Action C (einfache Aktion)
  * </pre>
  *
- * <p><b>Verwendung mit PlotAction:</b></p>
+ * <p><b>Verwendung mit AbstractPlotAction:</b></p>
  * <pre>
- * public class PlotActionManageStorage extends PlotAction implements MenuAction {
+ * public class AbstractPlotActionManageStorage extends AbstractPlotAction implements MenuAction {
  *
  *     {@literal @}Override
  *     public void execute(Player player) {
@@ -38,9 +38,9 @@ import java.util.List;
  *     {@literal @}Override
  *     public List&lt;GuiRenderable&gt; getSubActions() {
  *         return List.of(
- *             new PlotActionOpenStorage(plot),
+ *             new AbstractPlotActionOpenStorage(plot),
  *             new PlotActionSetStoragePrice(plot),
- *             new PlotActionUpgradeStorage(plot)
+ *             new AbstractPlotActionUpgradeStorage(plot)
  *         );
  *     }
  *
@@ -59,7 +59,7 @@ import java.util.List;
  * <p><b>Wichtige Hinweise:</b></p>
  * <ul>
  *   <li>MenuAction ist ein <b>Interface</b>, keine Klasse!</li>
- *   <li>PlotActions können optional MenuAction implementieren</li>
+ *   <li>AbstractPlotActions können optional MenuAction implementieren</li>
  *   <li>Submenüs können selbst wieder MenuActions enthalten (beliebig tief)</li>
  *   <li>GuiBuilder kann rekursiv Menüs aus MenuActions erstellen</li>
  * </ul>
@@ -67,9 +67,9 @@ import java.util.List;
  * <p><b>Beispiel: Trait-basierte Menüs:</b></p>
  * <pre>
  * interface PlotContainerStorage extends Plot {
- *     default List&lt;PlotAction&gt; getStorageActions() {
+ *     default List&lt;AbstractPlotAction&gt; getStorageActions() {
  *         return List.of(
- *             new PlotActionManageStorage(this)  // MenuAction mit Submenü
+ *             new AbstractPlotActionManageStorage(this)  // MenuAction mit Submenü
  *         );
  *     }
  * }
@@ -101,10 +101,10 @@ public interface MenuAction {
      * {@literal @}Override
      * public List&lt;GuiRenderable&gt; getSubActions() {
      *     return List.of(
-     *         new PlotActionOpenStorage(plot),
+     *         new AbstractPlotActionOpenStorage(plot),
      *         new PlotActionSetStoragePrice(plot),
-     *         new PlotActionUpgradeStorage(plot),
-     *         new PlotActionClearStorage(plot)
+     *         new AbstractPlotActionUpgradeStorage(plot),
+     *         new AbstractPlotActionClearStorage(plot)
      *     );
      * }
      * </pre>
@@ -123,16 +123,16 @@ public interface MenuAction {
      * {@literal @}Override
      * public List&lt;GuiRenderable&gt; getSubActions() {
      *     List&lt;GuiRenderable&gt; actions = new ArrayList&lt;&gt;();
-     *     actions.add(new PlotActionOpenStorage(plot));
+     *     actions.add(new AbstractPlotActionOpenStorage(plot));
      *
      *     // Nur wenn Storage leer ist
      *     if (plot.isStorageEmpty()) {
-     *         actions.add(new PlotActionFillStorage(plot));
+     *         actions.add(new AbstractPlotActionFillStorage(plot));
      *     }
      *
      *     // Nur für Premium-Plots
      *     if (plot.isPremium()) {
-     *         actions.add(new PlotActionUpgradeStorage(plot));
+     *         actions.add(new AbstractPlotActionUpgradeStorage(plot));
      *     }
      *
      *     return actions;

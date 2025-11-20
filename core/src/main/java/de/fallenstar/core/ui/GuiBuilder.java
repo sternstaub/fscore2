@@ -23,13 +23,13 @@ import java.util.List;
  *   <li>Filtert unsichtbare Actions via {@link GuiRenderable#isVisible(Player)}</li>
  *   <li>Berechnet optimale GUI-Größe (immer Vielfaches von 9)</li>
  *   <li>Füllt Inventory sequenziell mit Display-Items</li>
- *   <li>Funktioniert mit ALLEN GuiRenderable-Typen (PlotAction, MenuAction, etc.)</li>
+ *   <li>Funktioniert mit ALLEN GuiRenderable-Typen (AbstractPlotAction, MenuAction, etc.)</li>
  * </ul>
  *
  * <p><b>Beispiel-Verwendung:</b></p>
  * <pre>
  * // Erstelle GUI aus Plot-Actions
- * List&lt;PlotAction&gt; actions = plot.getAvailablePlotActions();
+ * List&lt;AbstractPlotAction&gt; actions = plot.getAvailablePlotActions();
  * Inventory gui = GuiBuilder.buildFromActions(actions, player, "Plot-Verwaltung");
  * player.openInventory(gui);
  * </pre>
@@ -38,7 +38,7 @@ import java.util.List;
  * <pre>
  * // Plot mit mehreren Traits
  * class TradeguildPlot implements PlotWithName, PlotContainerStorage, PlotContainerNpc {
- *     public List&lt;PlotAction&gt; getAvailablePlotActions() {
+ *     public List&lt;AbstractPlotAction&gt; getAvailablePlotActions() {
  *         return Stream.of(
  *             getNameActions(),
  *             getStorageActions(),
@@ -58,7 +58,7 @@ import java.util.List;
  * <p><b>MenuAction Support:</b></p>
  * <pre>
  * // MenuAction mit Submenü
- * class PlotActionManageStorage extends PlotAction implements MenuAction {
+ * class AbstractPlotActionManageStorage extends AbstractPlotAction implements MenuAction {
  *     public void execute(Player player) {
  *         // Erstelle Submenü via GuiBuilder
  *         Inventory submenu = GuiBuilder.buildFromActions(
@@ -74,7 +74,7 @@ import java.util.List;
  * <p><b>Visibility-Filtering:</b></p>
  * <pre>
  * // Actions mit Permission-Check
- * class PlotActionAdmin extends PlotAction {
+ * class AbstractPlotActionAdmin extends AbstractPlotAction {
  *     public boolean isVisible(Player player) {
  *         return player.hasPermission("plot.admin");
  *     }
@@ -138,9 +138,9 @@ public final class GuiBuilder {
      * <p><b>Beispiele:</b></p>
      * <pre>
      * // Einfaches GUI
-     * List&lt;PlotAction&gt; actions = List.of(
+     * List&lt;AbstractPlotAction&gt; actions = List.of(
      *     new PlotActionSetName(plot),
-     *     new PlotActionTeleport(plot)
+     *     new AbstractPlotActionTeleport(plot)
      * );
      * Inventory gui = GuiBuilder.buildFromActions(actions, player, "Plot-Menü");
      * player.openInventory(gui);
@@ -148,10 +148,10 @@ public final class GuiBuilder {
      *
      * <pre>
      * // Mit Visibility-Filtering
-     * List&lt;PlotAction&gt; actions = List.of(
+     * List&lt;AbstractPlotAction&gt; actions = List.of(
      *     new PlotActionSetName(plot),        // Sichtbar für alle
-     *     new PlotActionDelete(plot),         // Nur für Owner sichtbar
-     *     new PlotActionAdminReset(plot)      // Nur für Admins sichtbar
+     *     new AbstractPlotActionDelete(plot),         // Nur für Owner sichtbar
+     *     new AbstractPlotActionAdminReset(plot)      // Nur für Admins sichtbar
      * );
      * Inventory gui = GuiBuilder.buildFromActions(actions, player, "Plot-Menü");
      * // Nicht-Owner sehen nur PlotActionSetName
@@ -159,7 +159,7 @@ public final class GuiBuilder {
      *
      * <pre>
      * // Leere Action-Liste
-     * List&lt;PlotAction&gt; actions = List.of();
+     * List&lt;AbstractPlotAction&gt; actions = List.of();
      * Inventory gui = GuiBuilder.buildFromActions(actions, player, "Leeres Menü");
      * // Erstellt GUI mit minimaler Größe (9 Slots, leer)
      * </pre>
@@ -173,7 +173,7 @@ public final class GuiBuilder {
      *   <li>Leere Slots bleiben AIR (nicht gefüllt)</li>
      * </ul>
      *
-     * @param actions Liste von GuiRenderable-Objekten (z.B. PlotActions)
+     * @param actions Liste von GuiRenderable-Objekten (z.B. AbstractPlotActions)
      * @param player Der Player, für den das GUI erstellt wird (für Visibility-Checks)
      * @param title Der Titel des Inventars (wird im GUI-Header angezeigt)
      * @return Ein gefülltes Bukkit Inventory, bereit zum Öffnen

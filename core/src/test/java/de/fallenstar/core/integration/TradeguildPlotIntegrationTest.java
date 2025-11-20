@@ -1,7 +1,8 @@
 package de.fallenstar.core.integration;
 
-import de.fallenstar.core.plot.action.PlotAction;
+import de.fallenstar.core.plot.action.AbstractPlotAction;
 import de.fallenstar.core.plot.action.impl.PlotActionSetName;
+import de.fallenstar.core.plot.impl.TradeguildPlot;
 import de.fallenstar.core.plot.trait.PlotWithNpcContainer;
 import de.fallenstar.core.plot.trait.PlotWithStorageContainer;
 import de.fallenstar.core.plot.trait.PlotWithName;
@@ -128,7 +129,7 @@ class TradeguildPlotIntegrationTest {
                 "Test-Handelsgilde"
             );
 
-            List<PlotAction> actions = tradeguild.getAvailablePlotActions();
+            List<AbstractPlotAction> actions = tradeguild.getAvailablePlotActions();
 
             assertNotNull(actions, "Actions sollten nicht null sein");
             // Aktuell nur PlotActionSetName (andere Actions sind Placeholder)
@@ -150,11 +151,11 @@ class TradeguildPlotIntegrationTest {
             TradeguildPlot tradeguild = new TradeguildPlot(
                 UUID.randomUUID(),
                 ownerId,
-                location,
-                "Handelsgilde"
+                location
             );
+            tradeguild.setName("Handelsgilde");
 
-            List<PlotAction> actions = tradeguild.getAvailablePlotActions();
+            List<AbstractPlotAction> actions = tradeguild.getAvailablePlotActions();
 
             // Baue GUI
             Inventory gui = GuiBuilder.buildFromActions(actions, owner, "Handelsgilde verwalten");
@@ -204,14 +205,14 @@ class TradeguildPlotIntegrationTest {
             TradeguildPlot tradeguild = new TradeguildPlot(
                 UUID.randomUUID(),
                 ownerId,
-                location,
-                "Handelsgilde"
+                location
             );
+            tradeguild.setName("Handelsgilde");
 
-            List<PlotAction> actions = tradeguild.getAvailablePlotActions();
+            List<AbstractPlotAction> actions = tradeguild.getAvailablePlotActions();
 
             // Alle Actions sollten für Owner ausführbar sein
-            for (PlotAction action : actions) {
+            for (AbstractPlotAction action : actions) {
                 assertTrue(action.canExecute(owner),
                     "Owner sollte alle Actions ausführen können: " + action.getClass().getSimpleName());
             }
@@ -228,14 +229,14 @@ class TradeguildPlotIntegrationTest {
             TradeguildPlot tradeguild = new TradeguildPlot(
                 UUID.randomUUID(),
                 ownerId,
-                location,
-                "Handelsgilde"
+                location
             );
+            tradeguild.setName("Handelsgilde");
 
-            List<PlotAction> actions = tradeguild.getAvailablePlotActions();
+            List<AbstractPlotAction> actions = tradeguild.getAvailablePlotActions();
 
             // Alle aktuellen Actions sind Owner-Only
-            for (PlotAction action : actions) {
+            for (AbstractPlotAction action : actions) {
                 assertFalse(action.canExecute(nonOwner),
                     "Nicht-Owner sollte Owner-Only Actions nicht ausführen können: " + action.getClass().getSimpleName());
             }
@@ -252,9 +253,9 @@ class TradeguildPlotIntegrationTest {
             TradeguildPlot tradeguild = new TradeguildPlot(
                 UUID.randomUUID(),
                 ownerId,
-                location,
-                "Meine Handelsgilde"
+                location
             );
+            tradeguild.setName("Meine Handelsgilde");
 
             // Rufe Storage ab
             tradeguild.getStorageInventory();
@@ -265,8 +266,8 @@ class TradeguildPlotIntegrationTest {
     }
 
     @Test
-    @DisplayName("Integration: PlotAction reflektiert aktuelle Plot-Daten")
-    void testIntegration_PlotActionReflectsCurrentPlotData() {
+    @DisplayName("Integration: AbstractPlotAction reflektiert aktuelle Plot-Daten")
+    void testIntegration_AbstractPlotActionReflectsCurrentPlotData() {
         try (MockedStatic<Bukkit> bukkit = mockStatic(Bukkit.class)) {
             bukkit.when(() -> Bukkit.createInventory(isNull(), anyInt(), anyString()))
                 .thenReturn(storageInventory);
@@ -288,9 +289,9 @@ class TradeguildPlotIntegrationTest {
             TradeguildPlot tradeguild = new TradeguildPlot(
                 UUID.randomUUID(),
                 ownerId,
-                location,
-                "Alter Name"
+                location
             );
+            tradeguild.setName("Alter Name");
 
             // Erste Action mit altem Namen
             when(itemMeta.getLore()).thenReturn(initialLore);
@@ -315,110 +316,4 @@ class TradeguildPlotIntegrationTest {
         }
     }
 
-    // ==================== Test-Implementierung ====================
-
-    /**
-     * Mock-Implementierung eines TradeguildPlot für Integration-Tests.
-     *
-     * <p>Demonstriert vollständige Trait-Komposition:</p>
-     * <ul>
-     *   <li>PlotWithName - Namen-Verwaltung</li>
-     *   <li>PlotWithStorageContainer - Lager-Funktionalität</li>
-     *   <li>PlotWithNpcContainer - NPC-Verwaltung (Citizens-Integration)</li>
-     * </ul>
-     *
-     * <p>In einer realen Implementierung würde dieser Plot zusätzlich
-     * weitere Features haben wie:</p>
-     * <ul>
-     *   <li>Handels-Steuern</li>
-     *   <li>Händler-NPCs</li>
-     *   <li>Shop-Verwaltung</li>
-     *   <li>Wirtschafts-Integration</li>
-     * </ul>
-     */
-    private static class TradeguildPlot implements PlotWithName, PlotWithStorageContainer, PlotWithNpcContainer {
-        private final UUID id;
-        private final UUID ownerId;
-        private final Location location;
-        private String name;
-        private Inventory storageInventory;
-        private UUID npcId;
-
-        TradeguildPlot(UUID id, UUID ownerId, Location location, String name) {
-            this.id = id;
-            this.ownerId = ownerId;
-            this.location = location;
-            this.name = name;
-        }
-
-        // ==================== PlotWithName ====================
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        @Override
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        // ==================== PlotWithStorageContainer ====================
-
-        @Override
-        public Inventory getStorageInventory() {
-            if (storageInventory == null) {
-                storageInventory = Bukkit.createInventory(null, 54, "Lager: " + name);
-            }
-            return storageInventory;
-        }
-
-        // ==================== PlotWithNpcContainer ====================
-
-        @Override
-        public UUID getNpcId() {
-            return npcId;
-        }
-
-        @Override
-        public void setNpcId(UUID npcId) {
-            this.npcId = npcId;
-        }
-
-        // ==================== Plot ====================
-
-        @Override
-        public UUID getId() {
-            return id;
-        }
-
-        @Override
-        public UUID getOwnerId() {
-            return ownerId;
-        }
-
-        @Override
-        public Location getLocation() {
-            return location;
-        }
-
-        @Override
-        public List<PlotAction> getAvailablePlotActions() {
-            // Trait-Komposition: Kombiniere Actions aus allen Traits
-            return Stream.of(
-                getNameActions(),       // PlotWithName
-                getStorageActions(),    // PlotWithStorageContainer (aktuell leer)
-                getNpcActions()         // PlotWithNpcContainer (aktuell leer)
-            ).flatMap(List::stream).toList();
-        }
-
-        /**
-         * Override getNameActions() um konkrete Actions zurückzugeben.
-         * Normalerweise würde PlotWithName dies als Default-Methode bereitstellen.
-         */
-        @Override
-        public List<PlotAction> getNameActions() {
-            return List.of(new PlotActionSetName(this));
-        }
-    }
 }

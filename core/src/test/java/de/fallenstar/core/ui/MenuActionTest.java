@@ -1,7 +1,7 @@
 package de.fallenstar.core.ui;
 
 import de.fallenstar.core.plot.Plot;
-import de.fallenstar.core.plot.action.PlotAction;
+import de.fallenstar.core.plot.action.AbstractPlotAction;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
  *
  * <p>Testet das hierarchische Menü-Pattern mit Fokus auf:</p>
  * <ul>
- *   <li>PlotAction + MenuAction Integration</li>
+ *   <li>AbstractPlotAction + MenuAction Integration</li>
  *   <li>Leere und gefüllte Submenüs</li>
  *   <li>Rekursive MenuActions (Submenüs in Submenüs)</li>
  *   <li>Dynamische Sub-Actions</li>
@@ -55,14 +55,14 @@ class MenuActionTest {
     // ==================== Basis-Tests ====================
 
     @Test
-    @DisplayName("PlotAction kann MenuAction implementieren")
-    void testPlotAction_ImplementsMenuAction() {
+    @DisplayName("AbstractPlotAction kann MenuAction implementieren")
+    void testAbstractPlotAction_ImplementsMenuAction() {
         TestMenuAction action = new TestMenuAction(plot);
 
         assertNotNull(action, "MenuAction sollte erstellt werden können");
         assertTrue(action instanceof MenuAction, "TestMenuAction sollte MenuAction sein");
-        assertTrue(action instanceof PlotAction, "TestMenuAction sollte auch PlotAction sein");
-        assertTrue(action instanceof GuiRenderable, "PlotAction implementiert GuiRenderable");
+        assertTrue(action instanceof AbstractPlotAction, "TestMenuAction sollte auch AbstractPlotAction sein");
+        assertTrue(action instanceof GuiRenderable, "AbstractPlotAction implementiert GuiRenderable");
     }
 
     @Test
@@ -174,7 +174,7 @@ class MenuActionTest {
         TestMenuAction action = new TestMenuAction(plot);
 
         // Execute sollte ohne Exceptions laufen
-        assertDoesNotThrow(() -> action.execute(player),
+        assertDoesNotThrow(() -> action.invokeByGuiButton(player),
             "Execute sollte ohne Exceptions laufen");
 
         assertTrue(action.wasExecuted, "Execute sollte aufgerufen worden sein");
@@ -203,7 +203,7 @@ class MenuActionTest {
     /**
      * Standard MenuAction mit 3 Sub-Actions.
      */
-    private static class TestMenuAction extends PlotAction implements MenuAction {
+    private static class TestMenuAction extends AbstractPlotAction implements MenuAction {
         boolean wasExecuted = false;
 
         TestMenuAction(Plot plot) {
@@ -234,7 +234,7 @@ class MenuActionTest {
     /**
      * MenuAction mit leerem Submenü.
      */
-    private static class EmptyMenuAction extends PlotAction implements MenuAction {
+    private static class EmptyMenuAction extends AbstractPlotAction implements MenuAction {
         EmptyMenuAction(Plot plot) {
             super(plot);
         }
@@ -258,7 +258,7 @@ class MenuActionTest {
     /**
      * MenuAction mit nested MenuActions (Rekursion).
      */
-    private static class NestedMenuAction extends PlotAction implements MenuAction {
+    private static class NestedMenuAction extends AbstractPlotAction implements MenuAction {
         NestedMenuAction(Plot plot) {
             super(plot);
         }
@@ -285,7 +285,7 @@ class MenuActionTest {
     /**
      * MenuAction mit dynamischen Sub-Actions.
      */
-    private static class DynamicMenuAction extends PlotAction implements MenuAction {
+    private static class DynamicMenuAction extends AbstractPlotAction implements MenuAction {
         private boolean isEmpty = true;
 
         DynamicMenuAction(Plot plot) {

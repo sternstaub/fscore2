@@ -1,6 +1,6 @@
 package de.fallenstar.core.plot;
 
-import de.fallenstar.core.plot.action.PlotAction;
+import de.fallenstar.core.plot.action.AbstractPlotAction;
 import org.bukkit.Location;
 
 import java.util.List;
@@ -20,7 +20,7 @@ import java.util.UUID;
  * // Beispiel: TradeguildPlot mit mehreren Traits
  * class TradeguildPlot implements Plot, PlotWithName, PlotContainerStorage, PlotContainerNpc {
  *     {@literal @}Override
- *     public List&lt;PlotAction&gt; getAvailablePlotActions() {
+ *     public List&lt;AbstractPlotAction&gt; getAvailablePlotActions() {
  *         return Stream.of(
  *             getNameActions(),      // von PlotWithName
  *             getStorageActions(),   // von PlotContainerStorage
@@ -51,7 +51,7 @@ import java.util.UUID;
  *
  * @author FallenStar Development
  * @version 1.0.0
- * @see PlotAction
+ * @see AbstractPlotAction
  * @see de.fallenstar.core.ui.GuiBuilder
  */
 public interface Plot {
@@ -86,7 +86,7 @@ public interface Plot {
     /**
      * Gibt die UUID des Plot-Besitzers zurück.
      *
-     * <p>Diese Methode wird von {@link PlotAction#isOwner(org.bukkit.entity.Player)}
+     * <p>Diese Methode wird von {@link AbstractPlotAction#isOwner(org.bukkit.entity.Player)}
      * verwendet, um Ownership-Checks durchzuführen. Nur der Owner kann
      * bestimmte Aktionen ausführen (z.B. Plot umbenennen, löschen).</p>
      *
@@ -115,7 +115,7 @@ public interface Plot {
      * <p><b>Verwendung:</b></p>
      * <pre>
      * // Teleport-Action
-     * class PlotActionTeleport extends PlotAction {
+     * class AbstractPlotActionTeleport extends AbstractPlotAction {
      *     public void execute(Player player) {
      *         player.teleport(plot.getLocation());
      *         player.sendMessage("§aDu wurdest zum Plot teleportiert!");
@@ -136,7 +136,7 @@ public interface Plot {
     Location getLocation();
 
     /**
-     * Gibt alle verfügbaren PlotActions für diesen Plot zurück.
+     * Gibt alle verfügbaren AbstractPlotActions für diesen Plot zurück.
      *
      * <p>Diese Methode sammelt alle Actions aus implementierten Traits
      * und kombiniert sie zu einer einzigen Liste. Die Liste wird vom
@@ -147,8 +147,8 @@ public interface Plot {
      * <pre>
      * class TradeguildPlot implements Plot, PlotWithName, PlotContainerStorage {
      *     {@literal @}Override
-     *     public List&lt;PlotAction&gt; getAvailablePlotActions() {
-     *         List&lt;PlotAction&gt; actions = new ArrayList&lt;&gt;();
+     *     public List&lt;AbstractPlotAction&gt; getAvailablePlotActions() {
+     *         List&lt;AbstractPlotAction&gt; actions = new ArrayList&lt;&gt;();
      *         actions.addAll(getNameActions());      // von PlotWithName
      *         actions.addAll(getStorageActions());   // von PlotContainerStorage
      *         return actions;
@@ -159,7 +159,7 @@ public interface Plot {
      * <p><b>Alternative mit Streams:</b></p>
      * <pre>
      * {@literal @}Override
-     * public List&lt;PlotAction&gt; getAvailablePlotActions() {
+     * public List&lt;AbstractPlotAction&gt; getAvailablePlotActions() {
      *     return Stream.of(
      *         getNameActions(),
      *         getStorageActions(),
@@ -186,7 +186,7 @@ public interface Plot {
      *   <li>Visibility wird von GuiBuilder automatisch gefiltert (via {@link de.fallenstar.core.ui.GuiRenderable#isVisible})</li>
      * </ul>
      *
-     * @return Liste aller verfügbaren PlotActions (niemals null, kann leer sein)
+     * @return Liste aller verfügbaren AbstractPlotActions (niemals null, kann leer sein)
      */
-    List<PlotAction> getAvailablePlotActions();
+    List<AbstractPlotAction> getAvailablePlotActions();
 }

@@ -1,7 +1,7 @@
 package de.fallenstar.core.plot.trait;
 
 import de.fallenstar.core.plot.Plot;
-import de.fallenstar.core.plot.action.PlotAction;
+import de.fallenstar.core.plot.action.AbstractPlotAction;
 
 import java.util.List;
 import java.util.UUID;
@@ -33,7 +33,7 @@ import java.util.UUID;
  *     }
  *
  *     {@literal @}Override
- *     public List&lt;PlotAction&gt; getAvailablePlotActions() {
+ *     public List&lt;AbstractPlotAction&gt; getAvailablePlotActions() {
  *         return Stream.of(
  *             getNameActions(),       // PlotWithName
  *             getStorageActions(),    // PlotWithStorageContainer
@@ -64,7 +64,7 @@ import java.util.UUID;
  * @author FallenStar Development
  * @version 1.0.0-SNAPSHOT
  * @see Plot
- * @see PlotAction
+ * @see AbstractPlotAction
  * @see de.fallenstar.core.provider.NPCProvider
  */
 public interface PlotWithNpcContainer extends Plot {
@@ -136,20 +136,20 @@ public interface PlotWithNpcContainer extends Plot {
     void setNpcId(UUID npcId);
 
     /**
-     * Gibt die Liste von PlotActions für NPC-Verwaltung zurück.
+     * Gibt die Liste von AbstractPlotActions für NPC-Verwaltung zurück.
      *
      * <p>Diese Default-Implementierung ist ein Placeholder für zukünftige
      * NPC-bezogene Actions wie:</p>
      * <ul>
-     *   <li>PlotActionCreateNpc - Erstellt einen neuen NPC</li>
-     *   <li>PlotActionRemoveNpc - Entfernt den NPC</li>
-     *   <li>PlotActionConfigureNpc - Öffnet NPC-Konfiguration</li>
-     *   <li>PlotActionTeleportNpc - Teleportiert NPC zur Plot-Location</li>
+     *   <li>AbstractPlotActionCreateNpc - Erstellt einen neuen NPC</li>
+     *   <li>AbstractPlotActionRemoveNpc - Entfernt den NPC</li>
+     *   <li>AbstractPlotActionConfigureNpc - Öffnet NPC-Konfiguration</li>
+     *   <li>AbstractPlotActionTeleportNpc - Teleportiert NPC zur Plot-Location</li>
      * </ul>
      *
      * <p><b>Aktuelle Implementierung (Placeholder):</b></p>
      * <pre>
-     * default List&lt;PlotAction&gt; getNpcActions() {
+     * default List&lt;AbstractPlotAction&gt; getNpcActions() {
      *     return List.of();  // Wird in zukünftigen Phasen erweitert
      * }
      * </pre>
@@ -158,9 +158,9 @@ public interface PlotWithNpcContainer extends Plot {
      * <p>Konkrete Plot-Typen können diese Methode überschreiben, um
      * spezifische NPC-Actions anzubieten.</p>
      *
-     * @return Liste von PlotActions für NPC-Verwaltung (niemals null)
+     * @return Liste von AbstractPlotActions für NPC-Verwaltung (niemals null)
      */
-    default List<PlotAction> getNpcActions() {
+    default List<AbstractPlotAction> getNpcActions() {
         // Placeholder - wird in zukünftigen Phasen erweitert
         return List.of();
     }

@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Unit Tests für {@link PlotAction}.
+ * Unit Tests für {@link AbstractPlotAction}.
  *
  * <p>Testet das Command Pattern für Plot-Aktionen mit Fokus auf:</p>
  * <ul>
@@ -31,8 +31,8 @@ import static org.mockito.Mockito.*;
  */
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
-@DisplayName("PlotAction Tests")
-class PlotActionTest {
+@DisplayName("AbstractPlotAction Tests")
+class AbstractPlotActionTest {
 
     @Mock
     private Plot plot;
@@ -66,14 +66,14 @@ class PlotActionTest {
     @DisplayName("Konstruktor: Plot darf nicht null sein")
     void testConstructor_NullPlot_ThrowsException() {
         assertThrows(IllegalArgumentException.class, () -> {
-            new TestPlotAction(null);
+            new TestAbstractPlotAction(null);
         }, "Plot darf nicht null sein");
     }
 
     @Test
     @DisplayName("Konstruktor: Gültiger Plot wird gespeichert")
     void testConstructor_ValidPlot_StoresPlot() {
-        TestPlotAction action = new TestPlotAction(plot);
+        TestAbstractPlotAction action = new TestAbstractPlotAction(plot);
         assertNotNull(action);
         // Plot wird korrekt gespeichert (indirekt via isOwner)
         assertTrue(action.isOwner(owner));
@@ -84,21 +84,21 @@ class PlotActionTest {
     @Test
     @DisplayName("canExecute: Owner kann Aktion ausführen (requiresOwnership=true)")
     void testCanExecute_OwnerWithRequiredOwnership_ReturnsTrue() {
-        TestPlotAction action = new TestPlotAction(plot);
+        TestAbstractPlotAction action = new TestAbstractPlotAction(plot);
         assertTrue(action.canExecute(owner), "Owner sollte Aktion ausführen können");
     }
 
     @Test
     @DisplayName("canExecute: Nicht-Owner kann Aktion NICHT ausführen (requiresOwnership=true)")
     void testCanExecute_NonOwnerWithRequiredOwnership_ReturnsFalse() {
-        TestPlotAction action = new TestPlotAction(plot);
+        TestAbstractPlotAction action = new TestAbstractPlotAction(plot);
         assertFalse(action.canExecute(nonOwner), "Nicht-Owner sollte Aktion NICHT ausführen können");
     }
 
     @Test
     @DisplayName("canExecute: Jeder kann Aktion ausführen (requiresOwnership=false)")
     void testCanExecute_PublicAction_AlwaysReturnsTrue() {
-        PublicPlotAction action = new PublicPlotAction(plot);
+        PublicAbstractPlotAction action = new PublicAbstractPlotAction(plot);
         assertTrue(action.canExecute(owner), "Owner sollte Public-Action ausführen können");
         assertTrue(action.canExecute(nonOwner), "Nicht-Owner sollte Public-Action ausführen können");
     }
@@ -125,14 +125,14 @@ class PlotActionTest {
     @Test
     @DisplayName("isOwner: Erkennt Owner korrekt")
     void testIsOwner_OwnerPlayer_ReturnsTrue() {
-        TestPlotAction action = new TestPlotAction(plot);
+        TestAbstractPlotAction action = new TestAbstractPlotAction(plot);
         assertTrue(action.isOwner(owner), "isOwner sollte true für Owner-Player zurückgeben");
     }
 
     @Test
     @DisplayName("isOwner: Erkennt Nicht-Owner korrekt")
     void testIsOwner_NonOwnerPlayer_ReturnsFalse() {
-        TestPlotAction action = new TestPlotAction(plot);
+        TestAbstractPlotAction action = new TestAbstractPlotAction(plot);
         assertFalse(action.isOwner(nonOwner), "isOwner sollte false für Nicht-Owner zurückgeben");
     }
 
@@ -141,7 +141,7 @@ class PlotActionTest {
     @Test
     @DisplayName("getDisplayItem: Wird korrekt implementiert")
     void testGetDisplayItem_ReturnsConfiguredItemStack() {
-        TestPlotAction action = new TestPlotAction(plot);
+        TestAbstractPlotAction action = new TestAbstractPlotAction(plot);
         ItemStack item = action.getDisplayItem();
 
         assertNotNull(item, "DisplayItem sollte nicht null sein");
@@ -151,7 +151,7 @@ class PlotActionTest {
     @Test
     @DisplayName("isVisible: Standard-Implementierung gibt true zurück")
     void testIsVisible_DefaultImplementation_ReturnsTrue() {
-        TestPlotAction action = new TestPlotAction(plot);
+        TestAbstractPlotAction action = new TestAbstractPlotAction(plot);
         assertTrue(action.isVisible(owner), "isVisible sollte standardmäßig true zurückgeben");
         assertTrue(action.isVisible(nonOwner), "isVisible sollte standardmäßig true zurückgeben");
     }
@@ -169,7 +169,7 @@ class PlotActionTest {
     @Test
     @DisplayName("execute: Wird korrekt aufgerufen")
     void testExecute_CallsImplementation() {
-        TestPlotAction action = new TestPlotAction(plot);
+        TestAbstractPlotAction action = new TestAbstractPlotAction(plot);
         action.execute(owner);
 
         // Test, dass execute ohne Exceptions läuft
@@ -181,10 +181,10 @@ class PlotActionTest {
     /**
      * Standard Test-Implementierung mit requiresOwnership=true.
      */
-    private static class TestPlotAction extends PlotAction {
+    private static class TestAbstractPlotAction extends AbstractPlotAction {
         boolean wasExecuted = false;
 
-        TestPlotAction(Plot plot) {
+        TestAbstractPlotAction(Plot plot) {
             super(plot);
         }
 
@@ -202,8 +202,8 @@ class PlotActionTest {
     /**
      * Public Action (requiresOwnership=false).
      */
-    private static class PublicPlotAction extends PlotAction {
-        PublicPlotAction(Plot plot) {
+    private static class PublicAbstractPlotAction extends AbstractPlotAction {
+        PublicAbstractPlotAction(Plot plot) {
             super(plot);
         }
 
@@ -226,7 +226,7 @@ class PlotActionTest {
     /**
      * Custom Permission Action (canExecute überschrieben).
      */
-    private static class CustomPermissionAction extends PlotAction {
+    private static class CustomPermissionAction extends AbstractPlotAction {
         CustomPermissionAction(Plot plot) {
             super(plot);
         }
@@ -251,7 +251,7 @@ class PlotActionTest {
     /**
      * Owner-Only Visible Action (isVisible überschrieben).
      */
-    private static class OwnerOnlyVisibleAction extends PlotAction {
+    private static class OwnerOnlyVisibleAction extends AbstractPlotAction {
         OwnerOnlyVisibleAction(Plot plot) {
             super(plot);
         }

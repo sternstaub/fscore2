@@ -1,7 +1,7 @@
 package de.fallenstar.core.plot.trait;
 
 import de.fallenstar.core.plot.Plot;
-import de.fallenstar.core.plot.action.PlotAction;
+import de.fallenstar.core.plot.action.AbstractPlotAction;
 import org.bukkit.inventory.Inventory;
 
 import java.util.List;
@@ -27,7 +27,7 @@ import java.util.List;
  *     }
  *
  *     {@literal @}Override
- *     public List&lt;PlotAction&gt; getAvailablePlotActions() {
+ *     public List&lt;AbstractPlotAction&gt; getAvailablePlotActions() {
  *         return Stream.of(
  *             getNameActions(),       // PlotWithName
  *             getStorageActions()     // PlotWithStorageContainer
@@ -51,7 +51,7 @@ import java.util.List;
  * @author FallenStar Development
  * @version 1.0.0-SNAPSHOT
  * @see Plot
- * @see PlotAction
+ * @see AbstractPlotAction
  */
 public interface PlotWithStorageContainer extends Plot {
 
@@ -85,8 +85,8 @@ public interface PlotWithStorageContainer extends Plot {
      *
      * <p><b>Verwendung:</b></p>
      * <pre>
-     * // PlotAction öffnet Storage
-     * class PlotActionOpenStorage extends PlotAction {
+     * // AbstractPlotAction öffnet Storage
+     * class AbstractPlotActionOpenStorage extends AbstractPlotAction {
      *     public void execute(Player player) {
      *         PlotWithStorageContainer storagePlot = (PlotWithStorageContainer) plot;
      *         player.openInventory(storagePlot.getStorageInventory());
@@ -99,20 +99,20 @@ public interface PlotWithStorageContainer extends Plot {
     Inventory getStorageInventory();
 
     /**
-     * Gibt die Liste von PlotActions für Lager-Verwaltung zurück.
+     * Gibt die Liste von AbstractPlotActions für Lager-Verwaltung zurück.
      *
      * <p>Diese Default-Implementierung ist ein Placeholder für zukünftige
      * Storage-bezogene Actions wie:</p>
      * <ul>
-     *   <li>PlotActionOpenStorage - Öffnet das Lager</li>
-     *   <li>PlotActionClearStorage - Leert das Lager</li>
-     *   <li>PlotActionUpgradeStorage - Vergrößert das Lager</li>
+     *   <li>AbstractPlotActionOpenStorage - Öffnet das Lager</li>
+     *   <li>AbstractPlotActionClearStorage - Leert das Lager</li>
+     *   <li>AbstractPlotActionUpgradeStorage - Vergrößert das Lager</li>
      *   <li>PlotActionSetStoragePrice - Setzt Mietpreis für Lager</li>
      * </ul>
      *
      * <p><b>Aktuelle Implementierung (Placeholder):</b></p>
      * <pre>
-     * default List&lt;PlotAction&gt; getStorageActions() {
+     * default List&lt;AbstractPlotAction&gt; getStorageActions() {
      *     return List.of();  // Wird in zukünftigen Phasen erweitert
      * }
      * </pre>
@@ -121,9 +121,9 @@ public interface PlotWithStorageContainer extends Plot {
      * <p>Konkrete Plot-Typen können diese Methode überschreiben, um
      * spezifische Storage-Actions anzubieten.</p>
      *
-     * @return Liste von PlotActions für Lager-Verwaltung (niemals null)
+     * @return Liste von AbstractPlotActions für Lager-Verwaltung (niemals null)
      */
-    default List<PlotAction> getStorageActions() {
+    default List<AbstractPlotAction> getStorageActions() {
         // Placeholder - wird in zukünftigen Phasen erweitert
         return List.of();
     }

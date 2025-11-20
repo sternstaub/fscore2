@@ -1,7 +1,7 @@
 package de.fallenstar.core.plot.trait;
 
 import de.fallenstar.core.plot.Plot;
-import de.fallenstar.core.plot.action.PlotAction;
+import de.fallenstar.core.plot.action.AbstractPlotAction;
 
 import java.util.List;
 
@@ -31,7 +31,7 @@ import java.util.List;
  *     }
  *
  *     {@literal @}Override
- *     public List&lt;PlotAction&gt; getAvailablePlotActions() {
+ *     public List&lt;AbstractPlotAction&gt; getAvailablePlotActions() {
  *         return Stream.of(
  *             getNameActions(),      // von PlotWithName
  *             getStorageActions()    // von PlotWithStorageContainer
@@ -42,7 +42,7 @@ import java.util.List;
  *
  * <p><b>Default-Actions:</b></p>
  * <p>Das Interface stellt eine Default-Implementierung für {@link #getNameActions()}
- * bereit, die automatisch passende PlotActions zurückgibt. Diese können im GUI
+ * bereit, die automatisch passende AbstractPlotActions zurückgibt. Diese können im GUI
  * angezeigt werden.</p>
  *
  * <p><b>Verwendung:</b></p>
@@ -53,14 +53,14 @@ import java.util.List;
  * namedPlot.setName("Neuer Name");
  *
  * // GUI aus Trait-Actions generieren
- * List&lt;PlotAction&gt; nameActions = namedPlot.getNameActions();
+ * List&lt;AbstractPlotAction&gt; nameActions = namedPlot.getNameActions();
  * Inventory gui = GuiBuilder.buildFromActions(nameActions, player, "Namen verwalten");
  * </pre>
  *
  * @author FallenStar Development
  * @version 1.0.0
  * @see Plot
- * @see PlotAction
+ * @see AbstractPlotAction
  */
 public interface PlotWithName extends Plot {
 
@@ -88,7 +88,7 @@ public interface PlotWithName extends Plot {
     /**
      * Setzt einen neuen Namen für den Plot.
      *
-     * <p>Diese Methode wird typischerweise von PlotActions aufgerufen,
+     * <p>Diese Methode wird typischerweise von AbstractPlotActions aufgerufen,
      * wenn der Spieler den Plot umbenennen möchte.</p>
      *
      * <p><b>Validierung:</b></p>
@@ -119,7 +119,7 @@ public interface PlotWithName extends Plot {
     void setName(String name);
 
     /**
-     * Gibt die Liste von PlotActions für Namen-Verwaltung zurück.
+     * Gibt die Liste von AbstractPlotActions für Namen-Verwaltung zurück.
      *
      * <p>Diese Default-Implementierung gibt eine Liste mit Name-bezogenen
      * Actions zurück. In der aktuellen Phase ist dies ein Placeholder,
@@ -127,17 +127,17 @@ public interface PlotWithName extends Plot {
      *
      * <p><b>Default-Implementierung:</b></p>
      * <pre>
-     * default List&lt;PlotAction&gt; getNameActions() {
+     * default List&lt;AbstractPlotAction&gt; getNameActions() {
      *     return List.of();  // Placeholder
      * }
      * </pre>
      *
      * <p><b>Zukünftige Implementierung:</b></p>
      * <pre>
-     * default List&lt;PlotAction&gt; getNameActions() {
+     * default List&lt;AbstractPlotAction&gt; getNameActions() {
      *     return List.of(
      *         new PlotActionSetName(this),
-     *         new PlotActionResetName(this)
+     *         new AbstractPlotActionResetName(this)
      *     );
      * }
      * </pre>
@@ -146,9 +146,9 @@ public interface PlotWithName extends Plot {
      * <p>Implementierungen können diese Methode überschreiben, um
      * zusätzliche oder alternative Actions anzubieten.</p>
      *
-     * @return Liste von PlotActions für Namen-Verwaltung (niemals null)
+     * @return Liste von AbstractPlotActions für Namen-Verwaltung (niemals null)
      */
-    default List<PlotAction> getNameActions() {
+    default List<AbstractPlotAction> getNameActions() {
         // Placeholder - wird in zukünftigen Phasen erweitert
         return List.of();
     }
