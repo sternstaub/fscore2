@@ -254,6 +254,6 @@ public abstract class AbstractPlotAction implements InvokableByGuiButton {
      */
     @Override
     public boolean isVisible(Player player) {
-        return GuiRenderable.super.isVisible(player);
+        return true;  // Standard: immer sichtbar (wie GuiRenderable.isVisible() Default)
     }
 }
