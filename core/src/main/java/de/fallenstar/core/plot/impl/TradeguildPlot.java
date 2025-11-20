@@ -4,8 +4,8 @@ import de.fallenstar.core.plot.action.AbstractPlotAction;
 import de.fallenstar.core.plot.trait.PlotWithName;
 import de.fallenstar.core.plot.trait.PlotWithNpcContainer;
 import de.fallenstar.core.plot.trait.PlotWithStorageContainer;
-import org.bukkit.Inventory;
 import org.bukkit.Location;
+import org.bukkit.inventory.Inventory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -185,7 +185,6 @@ public class TradeguildPlot extends AbstractPlotClaimed
      *
      * @param inventory Das neue Lager-Inventar (kann null sein)
      */
-    @Override
     public void setStorageInventory(Inventory inventory) {
         // Placeholder - wird in zukünftigen Phasen implementiert
         this.storageInventory = inventory;

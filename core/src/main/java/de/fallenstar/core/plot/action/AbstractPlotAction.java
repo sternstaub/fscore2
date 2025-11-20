@@ -2,6 +2,7 @@ package de.fallenstar.core.plot.action;
 
 import de.fallenstar.core.invokable.InvokableByGuiButton;
 import de.fallenstar.core.plot.Plot;
+import de.fallenstar.core.ui.GuiRenderable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -253,6 +254,6 @@ public abstract class AbstractPlotAction implements InvokableByGuiButton {
      */
     @Override
     public boolean isVisible(Player player) {
-        return GuiRenderable.super.isVisible(player);
+        return true;  // Standard: immer sichtbar (wie GuiRenderable.isVisible() Default)
     }
 }

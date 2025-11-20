@@ -99,9 +99,9 @@ class TradeguildPlotIntegrationTest {
             TradeguildPlot tradeguild = new TradeguildPlot(
                 UUID.randomUUID(),
                 ownerId,
-                location,
-                "Handelsgilde des Nordens"
+                location
             );
+            tradeguild.setName("Handelsgilde des Nordens");
 
             // Verifiziere alle Trait-Interfaces
             assertTrue(tradeguild instanceof PlotWithName, "Sollte PlotWithName implementieren");
@@ -125,9 +125,9 @@ class TradeguildPlotIntegrationTest {
             TradeguildPlot tradeguild = new TradeguildPlot(
                 UUID.randomUUID(),
                 ownerId,
-                location,
-                "Test-Handelsgilde"
+                location
             );
+            tradeguild.setName("Test-Handelsgilde");
 
             List<AbstractPlotAction> actions = tradeguild.getAvailablePlotActions();
 
@@ -175,9 +175,9 @@ class TradeguildPlotIntegrationTest {
             TradeguildPlot tradeguild = new TradeguildPlot(
                 UUID.randomUUID(),
                 ownerId,
-                location,
-                "Initial Name"
+                location
             );
+            tradeguild.setName("Initial Name");
 
             // PlotWithName: Namen ändern
             tradeguild.setName("Neuer Name");
