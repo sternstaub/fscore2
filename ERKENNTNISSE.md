@@ -923,16 +923,176 @@ plot/
 - CONVENTIONS_NAMING.md neu geschrieben
 - CLAUDE.md aktualisiert
 
-**Phase 2-8: Code-Migration**
-- Trait-Interfaces umbenennen
-- Abstrakte Klassen erstellen
-- Package-Struktur reorganisieren
-- Tests migrieren
-- Build validieren
+**Phase 2: Trait-Interfaces umbenennen** ✅
+- PlotNamed → PlotWithName
+- PlotIsContainerForStorage → PlotWithStorageContainer
+- PlotIsContainerForNpc → PlotWithNpcContainer
+- Pattern: `[Subject]With[Capability]`
+
+**Phase 3: Abstrakte Klassen & Package-Struktur** ✅
+- PlotAction → AbstractPlotAction (Prefix-Pattern)
+- AbstractPlotBase erstellt (Immutable Plot-Basis)
+- AbstractPlotClaimed erstellt (Mutable Owner-ID)
+- TradeguildPlot als Referenz-Implementierung
+- impl/-Package für Implementierungen etabliert
+
+**Phase 4: Invokable-Pattern** ✅
+- Invokable Basis-Interface (Marker)
+- InvokableByCommand (Command-Invokation)
+- InvokableByGuiButton (GUI-Button-Invokation)
+- CommandInvoker Datenklasse mit Builder
+- AbstractPlotAction implements InvokableByGuiButton
+- execute() → invokeByGuiButton() umbenannt
+
+### Erkenntnisse Sprint 2
+
+**✅ Erfolgreiche Pattern:**
+- Prefix/Suffix-Pattern macht Hierarchie erkennbar
+- impl/-Package trennt sauber Contracts von Implementierungen
+- Invokable-Pattern besser als generisches execute()
+- Multi-Invokation ermöglicht flexible Action-Nutzung
+
+**🎯 Erreichte Ziele:**
+- Einheitliche Naming Conventions etabliert
+- Package-Struktur reorganisiert
+- Type-safe Invokation implementiert
+- TradeguildPlot als vollständige Referenz-Implementierung
 
 ---
 
-**Stand:** Sprint 1 abgeschlossen, Sprint 2 in Progress (2025-11-19)
+**Stand:** Sprint 2 abgeschlossen (2025-11-19)
 **Ziel:** Perfekte Architektur-Foundation ✅
 **Philosophie:** Explizite Namen > Kurze Namen ✅
 **Fokus:** Design vor Features ✅
+
+---
+
+## Sprint 3: Command-System & Feature-Implementierung (geplant)
+
+**Ziel:** Funktionsfähiges Command-System und erste konkrete Features
+
+### Geplante Phasen
+
+**Phase 1: Command-System** 
+- CommandManager für automatische Command-Registrierung
+- CommandExecutor-Integration mit InvokableByCommand
+- Subcommand-Routing-System
+- Permission-Handling
+
+**Phase 2: Konkrete PlotActions**
+- PlotActionClaim (Plot beanspruchen)
+- PlotActionOpenStorage (Lager öffnen)
+- PlotActionTeleport (Zu Plot teleportieren)
+- PlotActionSetStoragePrice (Lager-Preis setzen)
+- PlotActionSpawnNpc (NPC spawnen)
+
+**Phase 3: Persistenz-Layer**
+- PlotManager für Plot-Verwaltung
+- Plot-Datenbank-Schema
+- Plot-Serialisierung/Deserialisierung
+- Auto-Save-System
+
+**Phase 4: Provider-Implementierungen**
+- VaultEconomyProvider (module-vault)
+- CitizensNpcProvider (module-citizens)
+- TownyPlotProvider (module-towny)
+- MMOItemsProvider (module-mmoitems)
+
+**Phase 5: Event-System**
+- PlotClaimEvent
+- PlotOwnerChangeEvent
+- PlotDeleteEvent
+- Event-Handler für Cross-Plugin-Integration
+
+### Priorisierung
+
+**Kritisch (Must-Have):**
+- Command-System (ohne Commands ist Plugin nicht nutzbar)
+- PlotActionClaim (Basis-Funktionalität)
+- PlotManager (für Plot-Verwaltung)
+
+**Hoch (Should-Have):**
+- PlotActionTeleport (wichtig für UX)
+- PlotActionOpenStorage (Kern-Feature)
+- Persistenz-Layer (für Daten-Speicherung)
+
+**Medium (Nice-to-Have):**
+- PlotActionSetStoragePrice (Wirtschafts-Feature)
+- Provider-Implementierungen (optionale Module)
+- Event-System (für Erweiterbarkeit)
+
+**Niedrig (Future):**
+- PlotActionSpawnNpc (fortgeschrittenes Feature)
+- Komplexe GUI-Hierarchien
+- Admin-Commands
+
+### Architektur-Fokus Sprint 3
+
+**Command-Pattern Completion:**
+```java
+// InvokableByCommand vollständig nutzen
+class PlotActionClaim extends AbstractPlotAction
+    implements InvokableByCommand {
+
+    @Override
+    public CommandInvoker getCommandInvoker() {
+        return CommandInvoker.builder()
+            .command("plot")
+            .subcommand("claim")
+            .description("Beansprucht einen Plot")
+            .build();
+    }
+
+    @Override
+    public void invokeByCommand(Player player, String[] args) {
+        // Command-Logik
+    }
+
+    @Override
+    public void invokeByGuiButton(Player player) {
+        // GUI-Logik
+    }
+}
+```
+
+**Manager-Pattern:**
+```java
+class PlotManager {
+    private final Map<UUID, Plot> plotCache = new HashMap<>();
+    private final PlotRepository repository;
+
+    Plot createPlot(PlotType type, UUID ownerId, Location location) {
+        Plot plot = PlotFactory.create(type, ownerId, location);
+        plotCache.put(plot.getId(), plot);
+        repository.save(plot);
+        return plot;
+    }
+
+    Plot getPlot(UUID plotId) {
+        return plotCache.computeIfAbsent(plotId, repository::load);
+    }
+}
+```
+
+### Nächste Schritte
+
+1. **Command-System Proof-of-Concept**
+   - Einfacher CommandManager
+   - Eine Action mit InvokableByCommand
+   - Bukkit-Integration testen
+
+2. **PlotActionClaim implementieren**
+   - Erste vollständige Command+GUI Action
+   - Mit Permissions
+   - Mit Feedback-Messages
+
+3. **PlotManager Grundgerüst**
+   - In-Memory Plot-Verwaltung
+   - CRUD-Operationen
+   - Später: Persistenz hinzufügen
+
+---
+
+**Sprint 3 Status:** Geplant
+**Start:** Nach Sprint 2 Abschluss
+**Fokus:** Von Design zu Funktionalität

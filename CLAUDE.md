@@ -520,20 +520,44 @@ class MenuAction extends PlotAction
 
 ## 🔄 Projekt-Status
 
-**Aktueller Sprint:** Sprint 2 - Architektur-Refactoring
-**Letzter abgeschlossener Sprint:** Sprint 1 - Core-Foundation
+**Aktueller Sprint:** Sprint 3 - Command-System & Core-Actions (in Vorbereitung)
+**Letzter abgeschlossener Sprint:** Sprint 2 - Architektur-Refactoring
 
 **Sprint 1 Achievements:**
 - ✅ Maven Multi-Module Struktur
 - ✅ Provider-System mit Graceful Degradation
 - ✅ Self-Rendering Pattern (GuiRenderable)
 - ✅ Command Pattern (PlotAction)
-- ✅ Trait-Komposition (PlotNamed, PlotIsContainerForStorage, PlotIsContainerForNpc)
+- ✅ Trait-Komposition (PlotWithName, PlotWithStorageContainer, PlotWithNpcContainer)
 - ✅ Universal GuiBuilder
 - ✅ Proof-of-Concept (PlotActionSetName)
 
-**Sprint 2 Ziel:** Architektur-Refactoring (Naming Conventions & Package-Struktur)
-**Sprint 3 Geplant:** Command-System (Invokable-Pattern)
+**Sprint 2 Achievements:**
+- ✅ Naming Conventions etabliert
+  - Prefix-Pattern: `Abstract[Name]` für abstrakte Klassen
+  - Suffix-Pattern: `[Name][Type]` für konkrete Klassen
+  - Trait-Pattern: `[Subject]With[Capability]` für Trait-Interfaces
+  - Invokable-Pattern: `InvokableBy[Mechanism]` für Invokable-Interfaces
+- ✅ Package-Struktur etabliert (Root für Interfaces, `impl/` für Implementierungen)
+- ✅ Invokable-Pattern implementiert
+  - `Invokable` Marker-Interface als Basis
+  - `InvokableByCommand` mit `CommandInvoker` für Command-Metadaten
+  - `InvokableByGuiButton` implementiert in `AbstractPlotAction`
+  - Type-safe Invokation (keine generischen execute()-Methoden)
+- ✅ Plot-Hierarchie etabliert
+  - `AbstractPlotBase` (immutable) als Basis
+  - `AbstractPlotClaimed` (mutable owner) für transferierbare Plots
+  - `TradeguildPlot` als vollständige Reference-Implementierung
+- ✅ Alle bestehenden Klassen migriert (Traits umbenannt, Package-Struktur angepasst)
+
+**Sprint 3 Roadmap:**
+- **Phase 1:** Command-System (CommandManager mit Auto-Registration)
+- **Phase 2:** Konkrete PlotActions (Claim, Teleport, OpenStorage, SetPrice)
+- **Phase 3:** Persistenz-Layer (PlotManager, H2/SQLite)
+- **Phase 4:** Provider-Implementierungen (TownyProvider, VaultProvider, CitizensProvider)
+- **Phase 5:** Event-System (PlotClaimEvent, PlotTransferEvent)
+
+**Sprint 4+ Geplant:** NPC-Management, Web-API, Erweiterte Wirtschafts-Features
 
 ---
 

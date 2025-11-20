@@ -3,7 +3,7 @@
 Ein modulares Minecraft-Plugin-System für Plot-Management, Wirtschaft, NPCs und Item-Verwaltung.
 
 **Plattform:** Spigot/Paper 1.20+
-**Status:** 🚧 In Entwicklung (Sprint 1 abgeschlossen, Sprint 2 läuft)
+**Status:** 🚧 In Entwicklung (Sprint 2 abgeschlossen, Sprint 3 in Vorbereitung)
 **Build:** ✅ SUCCESS (146 Tests, ~95% Coverage)
 
 ---
@@ -101,25 +101,65 @@ mvn clean package
 - **Trait-Komposition** - Flexible Plot-Funktionalität durch Trait-Interfaces
 
 #### Plot-Typen (Basis)
-- **PlotNamed** - Plots mit Namen-Verwaltung
-- **PlotIsContainerForStorage** - Plots mit Lager-Funktion
-- **PlotIsContainerForNpc** - Plots mit NPC-Verwaltung
+- **PlotWithName** - Plots mit Namen-Verwaltung
+- **PlotWithStorageContainer** - Plots mit Lager-Funktion
+- **PlotWithNpcContainer** - Plots mit NPC-Verwaltung
 
 #### Verfügbare Plot-Aktionen
 - **Namen ändern** - Owner können Plot-Namen anpassen
 
-### 🚧 In Entwicklung (Sprint 2)
+### ✅ Implementiert (Sprint 2)
 
-- **Architektur-Refactoring** - Einheitliche Naming Conventions & Package-Struktur
-- **Invokable-Pattern** - Command- und GUI-Invokation-System
+#### Architektur-Refactoring
+- **Naming Conventions** - Einheitliche Prefix/Suffix-Pattern für alle Klassen
+  - Abstract-Klassen: `Abstract[Name]` (z.B. `AbstractPlotAction`)
+  - Concrete-Klassen: `[Name][Type]` (z.B. `PlotActionSetName`)
+  - Trait-Interfaces: `[Subject]With[Capability]` (z.B. `PlotWithName`)
+  - Invokable-Interfaces: `InvokableBy[Mechanism]` (z.B. `InvokableByCommand`)
+- **Package-Struktur** - Root für Interfaces, `impl/` für Implementierungen
+  - `de.fallenstar.core.plot` - Plot-Interfaces
+  - `de.fallenstar.core.plot.impl` - Konkrete Plot-Klassen
+  - `de.fallenstar.core.plot.action` - Action-Interfaces
+  - `de.fallenstar.core.plot.action.impl` - Konkrete Actions
 
-### 📅 Geplant (Sprint 3+)
+#### Invokable-Pattern
+- **Multi-Invokation** - Objekte können auf verschiedene Arten aufgerufen werden
+  - `InvokableByCommand` - Aufruf via Minecraft-Command
+  - `InvokableByGuiButton` - Aufruf via GUI-Click
+  - Type-safe Invokation (keine generischen execute()-Methoden)
+- **CommandInvoker** - Metadaten für Command-Registrierung
+- **AbstractPlotAction** - Implementiert `InvokableByGuiButton` als Basis
 
-- **Storage-Verwaltung** - Lager öffnen, Preise setzen
+#### Plot-Hierarchie
+- **AbstractPlotBase** - Immutable Basis mit ID, Owner, Location
+- **AbstractPlotClaimed** - Mutable Owner (Plot-Transfers)
+- **TradeguildPlot** - Reference-Implementierung mit Trait-Komposition
+
+### 📅 Geplant (Sprint 3)
+
+#### Command-System
+- **CommandManager** - Automatische Command-Registrierung aus InvokableByCommand
+- **Tab-Completion** - Intelligente Command-Vervollständigung
+- **Permission-System** - Integration mit Bukkit-Permissions
+
+#### Konkrete PlotActions
+- **PlotActionClaim** - Plots claimen/freigeben
+- **PlotActionTeleport** - Zu Plots teleportieren
+- **PlotActionOpenStorage** - Lager-Inventar öffnen (via Command + GUI)
+- **PlotActionSetPrice** - Preise für Storage/Zugriff setzen
+
+#### Persistenz-Layer
+- **PlotManager** - Plot-Verwaltung (CRUD-Operationen)
+- **Datenbank-Integration** - H2/SQLite für Plot-Daten
+- **Auto-Save** - Periodisches Speichern aller Plots
+
+### 📅 Geplant (Sprint 4+)
+
 - **NPC-Verwaltung** - NPCs spawnen, entfernen, konfigurieren
-- **Teleport-System** - Zu Plots teleportieren
-- **Persistenz** - Plot-Daten in Datenbank speichern
+- **Event-System** - PlotClaimEvent, PlotTransferEvent, etc.
+- **Provider-Implementierungen** - Konkrete Towny/Vault/Citizens-Integrationen
 - **Wirtschafts-Features** - Handels-Steuern, Shop-Verwaltung
+- **Web-API** - REST-API für externe Tools
 
 ---
 
@@ -192,15 +232,15 @@ Module sind **optional**. Wenn ein Modul fehlt, läuft das Core-Plugin mit reduz
 
 ### Projekt-Status
 
-**Aktueller Sprint:** Sprint 2 - Architektur-Refactoring (in Progress)
-**Letzter Sprint:** Sprint 1 - Core-Foundation (abgeschlossen)
+**Aktueller Sprint:** Sprint 3 - Command-System & Core-Actions (in Vorbereitung)
+**Letzter Sprint:** Sprint 2 - Architektur-Refactoring (abgeschlossen)
 
 **Sprint 1 Achievements:**
 - ✅ Maven Multi-Module Struktur
 - ✅ Provider-System mit Graceful Degradation
 - ✅ Self-Rendering Pattern (GuiRenderable)
 - ✅ Command Pattern (PlotAction)
-- ✅ Trait-Komposition (PlotNamed, PlotIsContainerForStorage, PlotIsContainerForNpc)
+- ✅ Trait-Komposition (PlotWithName, PlotWithStorageContainer, PlotWithNpcContainer)
 - ✅ Universal GuiBuilder
 - ✅ Proof-of-Concept validiert (PlotActionSetName)
 
@@ -209,17 +249,28 @@ Module sind **optional**. Wenn ein Modul fehlt, läuft das Core-Plugin mit reduz
 - Code Coverage: ~95%
 - Build: SUCCESS
 
-**Sprint 2 Ziele:**
-- Einheitliche Naming Conventions (Prefix/Suffix-Pattern)
-- Package-Struktur etablieren (Root für Interfaces, impl/ für Klassen)
-- Invokable-Pattern vorbereiten (Command & GUI)
-- Alle bestehenden Klassen migrieren
+**Sprint 2 Achievements:**
+- ✅ Naming Conventions etabliert (Prefix/Suffix-Pattern)
+  - Abstract-Klassen: `Abstract[Name]`
+  - Trait-Interfaces: `[Subject]With[Capability]`
+  - Invokable-Interfaces: `InvokableBy[Mechanism]`
+- ✅ Package-Struktur etabliert (Root für Interfaces, impl/ für Klassen)
+- ✅ Invokable-Pattern implementiert
+  - `Invokable` Marker-Interface
+  - `InvokableByCommand` mit `CommandInvoker`
+  - `InvokableByGuiButton` implementiert in `AbstractPlotAction`
+- ✅ Plot-Hierarchie erstellt
+  - `AbstractPlotBase` (immutable)
+  - `AbstractPlotClaimed` (mutable owner)
+  - `TradeguildPlot` als Reference-Implementierung
+- ✅ Alle bestehenden Klassen migriert
 
-**Sprint 3+ Roadmap:**
-- Command-System (InvokableByCommand)
-- Konkrete PlotActions (Claim, Storage, NPC, Teleport)
-- Persistenz-Layer (PlotManager, Datenbank)
-- Provider-Implementierungen (Towny, Vault, Citizens)
+**Sprint 3 Roadmap (geplant):**
+- **Phase 1:** Command-System (CommandManager mit auto-registration)
+- **Phase 2:** Konkrete PlotActions (Claim, Teleport, Storage, SetPrice)
+- **Phase 3:** Persistenz-Layer (PlotManager, H2/SQLite)
+- **Phase 4:** Provider-Implementierungen (Towny, Vault, Citizens)
+- **Phase 5:** Event-System (PlotClaimEvent, PlotTransferEvent)
 
 ### Build & Tests
 
