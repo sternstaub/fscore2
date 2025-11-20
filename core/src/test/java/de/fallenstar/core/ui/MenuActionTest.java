@@ -174,7 +174,7 @@ class MenuActionTest {
         TestMenuAction action = new TestMenuAction(plot);
 
         // Execute sollte ohne Exceptions laufen
-        assertDoesNotThrow(() -> action.execute(player),
+        assertDoesNotThrow(() -> action.invokeByGuiButton(player),
             "Execute sollte ohne Exceptions laufen");
 
         assertTrue(action.wasExecuted, "Execute sollte aufgerufen worden sein");

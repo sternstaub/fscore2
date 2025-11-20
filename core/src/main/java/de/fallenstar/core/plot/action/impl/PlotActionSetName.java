@@ -90,9 +90,9 @@ public class PlotActionSetName extends AbstractPlotAction {
      * @param player Der Spieler, der die Action ausführt
      */
     @Override
-    public void execute(Player player) {
+    public void invokeByGuiButton(Player player) {
         // Placeholder-Implementierung für Phase 9
-        player.sendMessage("§e[AbstractPlotAction] §7Namen ändern für Plot: §f" + namedPlot.getName());
+        player.sendMessage("§e[PlotAction] §7Namen ändern für Plot: §f" + namedPlot.getName());
         player.sendMessage("§7Diese Funktion wird in einer zukünftigen Phase implementiert.");
         player.sendMessage("§7Du könntest hier einen neuen Namen eingeben.");
     }

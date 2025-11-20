@@ -1,7 +1,7 @@
 package de.fallenstar.core.plot.action;
 
+import de.fallenstar.core.invokable.InvokableByGuiButton;
 import de.fallenstar.core.plot.Plot;
-import de.fallenstar.core.ui.GuiRenderable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -12,14 +12,15 @@ import org.bukkit.inventory.ItemStack;
  *
  * <p>AbstractPlotAction kombiniert drei Verantwortlichkeiten in einer Klasse:</p>
  * <ul>
- *   <li><b>Business Logic:</b> {@link #execute(Player)} führt die Aktion aus</li>
+ *   <li><b>Business Logic:</b> {@link #invokeByGuiButton(Player)} führt die Aktion aus</li>
  *   <li><b>Permissions:</b> {@link #canExecute(Player)} prüft Berechtigungen</li>
  *   <li><b>GUI-Rendering:</b> {@link #getDisplayItem()} zeigt die Aktion im GUI</li>
  * </ul>
  *
- * <p><b>Self-Rendering Pattern:</b></p>
- * <p>AbstractPlotAction-Subklassen rendern sich selbst im GUI durch Implementierung von
- * {@link GuiRenderable}. Es sind keine separaten UI-Klassen notwendig.</p>
+ * <p><b>Invokable-Pattern:</b></p>
+ * <p>AbstractPlotAction implementiert {@link InvokableByGuiButton}, was bedeutet,
+ * dass PlotActions durch GUI-Button-Clicks invoked werden können. Das Self-Rendering
+ * Pattern bleibt erhalten (via {@link de.fallenstar.core.ui.GuiRenderable}).</p>
  *
  * <p><b>Permission-System:</b></p>
  * <p>Das Permission-System arbeitet zweistufig:</p>
@@ -37,7 +38,7 @@ import org.bukkit.inventory.ItemStack;
  *     }
  *
  *     {@literal @}Override
- *     public void execute(Player player) {
+ *     public void invokeByGuiButton(Player player) {
  *         player.sendMessage("§aGib einen neuen Namen ein:");
  *         // Chat-Input-Handler registrieren
  *     }
@@ -59,7 +60,7 @@ import org.bukkit.inventory.ItemStack;
  * AbstractPlotAction action = new PlotActionSetName(plot);
  *
  * if (action.canExecute(player)) {
- *     action.execute(player);
+ *     action.invokeByGuiButton(player);
  * } else {
  *     player.sendMessage("§cDu hast keine Berechtigung!");
  * }
@@ -76,10 +77,10 @@ import org.bukkit.inventory.ItemStack;
  *
  * @author FallenStar Development
  * @version 1.0.0
- * @see GuiRenderable
+ * @see InvokableByGuiButton
  * @see Plot
  */
-public abstract class AbstractPlotAction implements GuiRenderable {
+public abstract class AbstractPlotAction implements InvokableByGuiButton {
 
     /**
      * Der Plot, auf dem diese Aktion ausgeführt wird.
@@ -163,32 +164,46 @@ public abstract class AbstractPlotAction implements GuiRenderable {
     }
 
     /**
-     * Führt die Plot-Aktion aus.
+     * Wird aufgerufen, wenn der Spieler auf das GUI-Item klickt.
      *
-     * <p><b>Wichtig:</b> Diese Methode wird nur aufgerufen, wenn
-     * {@link #canExecute(Player)} true zurückgegeben hat. Die Berechtigung
-     * muss NICHT erneut geprüft werden.</p>
+     * <p>Diese Methode von {@link InvokableByGuiButton} implementiert die Logik,
+     * die ausgeführt wird, wenn ein Spieler im GUI auf das Item dieser Action klickt.</p>
+     *
+     * <p><b>Wichtig:</b> Permissions werden typischerweise VOR Aufruf geprüft
+     * (via {@link de.fallenstar.core.ui.GuiRenderable#isVisible(Player)}).</p>
      *
      * <p><b>Implementierungs-Richtlinien:</b></p>
      * <ul>
      *   <li>Sende dem Player Feedback (Success/Error Messages)</li>
      *   <li>Werfe keine Exceptions für normale Fehler (nutze Messages)</li>
+     *   <li>Schließe Inventory falls nötig (nicht bei Submenüs)</li>
      *   <li>Nutze die Bukkit API für asynchrone Operationen</li>
      * </ul>
      *
-     * <p><b>Beispiel:</b></p>
+     * <p><b>Beispiel - Direkte Aktion:</b></p>
      * <pre>
      * {@literal @}Override
-     * public void execute(Player player) {
-     *     player.sendMessage("§aPlot wird teleportiert...");
+     * public void invokeByGuiButton(Player player) {
+     *     player.closeInventory();
      *     player.teleport(plot.getLocation());
      *     player.sendMessage("§aDu wurdest zu deinem Plot teleportiert!");
      * }
      * </pre>
      *
-     * @param player Der Player, der die Aktion ausführt (niemals null)
+     * <p><b>Beispiel - Chat-Input:</b></p>
+     * <pre>
+     * {@literal @}Override
+     * public void invokeByGuiButton(Player player) {
+     *     player.closeInventory();
+     *     player.sendMessage("§aGib einen neuen Namen ein:");
+     *     // Chat-Input-Handler registrieren
+     * }
+     * </pre>
+     *
+     * @param player Der Spieler, der die Aktion ausführt (niemals null)
      */
-    public abstract void execute(Player player);
+    @Override
+    public abstract void invokeByGuiButton(Player player);
 
     /**
      * Gibt das ItemStack zurück, das in der GUI angezeigt werden soll.
