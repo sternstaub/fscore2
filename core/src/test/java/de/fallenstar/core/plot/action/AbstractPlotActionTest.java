@@ -189,7 +189,7 @@ class AbstractPlotActionTest {
         }
 
         @Override
-        public void execute(Player player) {
+        public void invokeByGuiButton(Player player) {
             wasExecuted = true;
         }
 
@@ -213,7 +213,7 @@ class AbstractPlotActionTest {
         }
 
         @Override
-        public void execute(Player player) {
+        public void invokeByGuiButton(Player player) {
             // No-op
         }
 
@@ -238,7 +238,7 @@ class AbstractPlotActionTest {
         }
 
         @Override
-        public void execute(Player player) {
+        public void invokeByGuiButton(Player player) {
             // No-op
         }
 
@@ -257,7 +257,7 @@ class AbstractPlotActionTest {
         }
 
         @Override
-        public void execute(Player player) {
+        public void invokeByGuiButton(Player player) {
             // No-op
         }
 

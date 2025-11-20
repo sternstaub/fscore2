@@ -341,7 +341,7 @@ class PlotTest {
         }
 
         @Override
-        public void execute(Player player) {
+        public void invokeByGuiButton(Player player) {
             // No-op
         }
 

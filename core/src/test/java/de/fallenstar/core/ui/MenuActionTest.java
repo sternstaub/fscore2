@@ -220,7 +220,7 @@ class MenuActionTest {
         }
 
         @Override
-        public void execute(Player player) {
+        public void invokeByGuiButton(Player player) {
             wasExecuted = true;
             // In echter Implementierung: Öffne Submenü mit GuiBuilder
         }
@@ -245,7 +245,7 @@ class MenuActionTest {
         }
 
         @Override
-        public void execute(Player player) {
+        public void invokeByGuiButton(Player player) {
             // No-op
         }
 
@@ -272,7 +272,7 @@ class MenuActionTest {
         }
 
         @Override
-        public void execute(Player player) {
+        public void invokeByGuiButton(Player player) {
             // No-op
         }
 
@@ -309,7 +309,7 @@ class MenuActionTest {
         }
 
         @Override
-        public void execute(Player player) {
+        public void invokeByGuiButton(Player player) {
             // No-op
         }
 

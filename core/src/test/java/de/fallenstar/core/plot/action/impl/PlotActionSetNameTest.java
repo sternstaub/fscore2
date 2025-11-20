@@ -132,7 +132,7 @@ class PlotActionSetNameTest {
     @Test
     @DisplayName("execute: Sendet Placeholder-Message an Spieler")
     void testExecute_SendsPlaceholderMessage() {
-        action.execute(owner);
+        action.invokeByGuiButton(owner);
 
         // Verifiziere, dass 3 Messages gesendet wurden
         ArgumentCaptor<String> messageCaptor = ArgumentCaptor.forClass(String.class);
@@ -155,7 +155,7 @@ class PlotActionSetNameTest {
     void testExecute_WorksForNonOwner() {
         // execute() selbst prüft keine Permissions, das macht canExecute()
         // Aber execute() sollte trotzdem ohne Fehler laufen
-        assertDoesNotThrow(() -> action.execute(nonOwner),
+        assertDoesNotThrow(() -> action.invokeByGuiButton(nonOwner),
             "execute() sollte keine Exception werfen");
 
         verify(nonOwner, times(3)).sendMessage(anyString());
